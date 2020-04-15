@@ -150,7 +150,7 @@ public class BallContainer implements Iterable<Ball> {
         Iterator<Ball> iterator = contents.iterator();
 
         while (iterator.hasNext()) {
-            if (iterator.next().getVolume() == b.getVolume()) {
+            if (iterator.next() == b) {
                 return true;
             }
         }
