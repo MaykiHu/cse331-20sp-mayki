@@ -30,7 +30,7 @@ public class BallContainer implements Iterable<Ball> {
     /**
      * Volume of the BallContainer
      */
-    private int volume;
+    private double volume;
 
     /**
      * Constructor that creates a new BallContainer.
