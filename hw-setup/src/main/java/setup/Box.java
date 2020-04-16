@@ -12,7 +12,7 @@
 package setup;
 
 import java.lang.Iterable;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * This is a container can be used to contain Balls. The key
@@ -27,13 +27,18 @@ public class Box implements Iterable<Ball> {
     private BallContainer ballContainer;
 
     /**
+     * max volume that this box can store
+     */
+    private double maxVolume;
+
+    /**
      * Constructor that creates a new box.
      *
      * @param maxVolume Total volume of balls that this box can contain.
      */
     public Box(double maxVolume) {
-        // Your code goes here.  Remove the exception after you're done.
-        throw new RuntimeException("Method not implemented");
+        ballContainer = new BallContainer();
+        this.maxVolume = maxVolume;
     }
 
     /**
@@ -64,8 +69,16 @@ public class Box implements Iterable<Ball> {
      * @spec.requires b != null.
      */
     public boolean add(Ball b) {
-        // Your code goes here.  Remove the exception after you're done.
-        throw new RuntimeException("Method not implemented");
+        if (ballContainer.contains(b)) { // Ball is in box
+            return false;
+        } else { // Ball is not in box
+            if (ballContainer.getVolume() + b.getVolume() > maxVolume) { // Too full
+                return false;
+            } else { // Ball can be added
+                ballContainer.add(b);
+                return true;
+            }
+        }
     }
 
     /**
@@ -77,8 +90,23 @@ public class Box implements Iterable<Ball> {
      * ascending size.
      */
     public Iterator<Ball> getBallsFromSmallest() {
-        // Your code goes here.  Remove the exception after you're done.
-        throw new RuntimeException("Method not implemented");
+        List<Ball> ballList = new ArrayList<>();
+        Iterator<Ball> iterator = ballContainer.iterator();
+        while (iterator.hasNext()) {
+            ballList.add(iterator.next());
+        }
+        // Sort the balls
+        Collections.sort(ballList, (b1, b2) -> {
+            double volumeDiff = b1.getVolume() - b2.getVolume();
+            if (volumeDiff < 0) {
+                return -1;
+            } else if (volumeDiff > 0) { // b2 is smaller
+                return 1;
+            } else { // Equal size
+                return 0;
+            }
+        });
+        return Collections.unmodifiableList(ballList).iterator();
     }
 
     /**
