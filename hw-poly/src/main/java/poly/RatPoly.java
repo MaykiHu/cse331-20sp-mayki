@@ -87,8 +87,11 @@ public final class RatPoly {
      * @spec.effects Constructs a new Poly equal to "rt". If rt.isZero(), constructs a "0" polynomial.
      */
     public RatPoly(RatTerm rt) {
-        // TODO: Fill in this method, then remove the RuntimeException
-        throw new RuntimeException("RatPoly constructor is not yet implemented");
+        this(); // constructs a "0" polynomial
+        if (!rt.isZero()) {
+            terms.add(rt);
+        }
+        checkRep();
     }
 
     /**
@@ -99,8 +102,11 @@ public final class RatPoly {
      * polynomial.
      */
     public RatPoly(int c, int e) {
-        // TODO: Fill in this method, then remove the RuntimeException
-        throw new RuntimeException("RatPoly constructor is not yet implemented");
+        this(); // constructs a "0" polynomial
+        if (c != 0) {
+            terms.add(new RatTerm(new RatNum(c), e));
+        }
+        checkRep();
     }
 
     /**
@@ -122,8 +128,11 @@ public final class RatPoly {
      * @spec.requires !this.isNaN()
      */
     public int degree() {
-        // TODO: Fill in this method, then remove the RuntimeException
-        throw new RuntimeException("RatPoly.degree() is not yet implemented");
+        if (terms.isEmpty()) { // "0" polynomial
+            return 0;
+        } else { // the largest is the first term, according to spec
+            return terms.get(0).getExpt();
+        }
     }
 
     /**
@@ -135,8 +144,35 @@ public final class RatPoly {
      * @spec.requires !this.isNaN()
      */
     public RatTerm getTerm(int deg) {
-        // TODO: Fill in this method, then remove the RuntimeException
-        throw new RuntimeException("RatPoly.getTerm() is not yet implemented");
+        int degIndex = getTermIndex(terms, deg);
+        if (degIndex == -1) { // No matching degree within index bounds
+            return RatTerm.ZERO;
+        }
+        return terms.get(degIndex);
+    }
+
+    /**
+     * Gets the index of the RatTerm associated with degree 'deg' from lst
+     *
+     * @param deg the degree for which to find the corresponding RatTerm, lst is a list of RatTerms
+     * @return the int index corresponding to the RatTerm with degree deg.  If there is no term of
+     * degree 'deg' in this poly, then returns -1
+     * @spec.requires !this.isNan()
+     */
+    private static int getTermIndex(List<RatTerm> lst, int deg) {
+        // Inv:  0 <= i < length(p), traverse terms for E(p, i) such that E(p, i) = deg
+        int i = 0;
+        while (i < lst.size()) {
+            int currDeg = lst.get(i).getExpt();
+            if (deg > currDeg) { // Short circuit, no degree exists since expt keeps desc.
+                return -1;
+            } else if (deg == currDeg) { // A match
+                return i;
+            } else { // Keep looking
+                i++;
+            }
+        }
+        return -1; // No match was found
     }
 
     /**
@@ -145,8 +181,16 @@ public final class RatPoly {
      * @return true if and only if this has some coefficient = "NaN"
      */
     public boolean isNaN() {
-        // TODO: Fill in this method, then remove the RuntimeException
-        throw new RuntimeException("RatPoly.isNaN() is not yet implemented");
+        // Inv: 0 <= i < length(p), traverse terms for C(p, i), true iff C(p, i) = NaN
+        int i = 0;
+        while (i < terms.size()) {
+            RatNum coeff = terms.get(i).getCoeff(); // coefficient of this term
+            if (coeff.equals(RatNum.NaN)) {
+                return true;
+            }
+            i++;
+        }
+        return false; // no coefficient has "NaN"
     }
 
     /**
@@ -161,9 +205,11 @@ public final class RatPoly {
      * @see RatTerm regarding (C . E) notation
      */
     private static void scaleCoeff(List<RatTerm> lst, RatNum scalar) {
-        // TODO: Fill in this method as specified, modify it to your liking, or remove it.
-        // Do not leave this method as-is. You must either use it somehow or remove it.
-        throw new RuntimeException("RatPoly.scaleCoeff() is not yet implemented");
+        // Inv: 0 <= i < length(p), lst = {(C_0 * scalar, E), (C_1 * scalar, E), ..., (C_i * scalar, E)}
+        for (int i = 0; i < lst.size(); i++) {
+            RatTerm term = lst.get(i);
+            lst.set(i, term.mul(new RatTerm(scalar, 0)));
+        }
     }
 
     /**
@@ -178,9 +224,11 @@ public final class RatPoly {
      * @see RatTerm regarding (C . E) notation
      */
     private static void incremExpt(List<RatTerm> lst, int degree) {
-        // TODO: Fill in this method as specified, modify it to your liking, or remove it.
-        // Do not leave this method as-is. You must either use it somehow or remove it.
-        throw new RuntimeException("RatPoly.incremExpt() is not yet implemented");
+        // Inv: 0 <= i < length(p), lst = {(C, E_0 + deg), (C, E_1 + deg), ..., (C, E_i + deg)}
+        for (int i = 0; i < lst.size(); i++) {
+            RatTerm term = lst.get(i);
+            lst.set(i, new RatTerm(term.getCoeff(), term.getExpt() + degree));
+        }
     }
 
     /**
@@ -204,9 +252,26 @@ public final class RatPoly {
      * cofind(lst,newTerm.getExpt()) + newTerm.getCoeff())
      */
     private static void sortedInsert(List<RatTerm> lst, RatTerm newTerm) {
-        // TODO: Fill in this method, then remove the RuntimeException
-        // Note: Some of the provided code in this class relies on this method working as-specified.
-        throw new RuntimeException("RatPoly.sortedInsert() is not yet implemented");
+        int degIndex = getTermIndex(lst, newTerm.getExpt());
+        if (degIndex != -1) { // term w/ degree exists
+            RatTerm term = lst.get(degIndex);
+            lst.set(degIndex, term.add(newTerm));
+        } else { // term w/ degree does not exist
+            // Inv: 0 < i < n, 0 <= n < lst.size,
+            // lst = {(C_0, E_0), (C_1, E_1), ..., (C_i, E_i), (C_n, E_n)} where (C_i, E_i) = newTerm
+            boolean foundPos = false; // found position to insert
+            int i = 0;
+            while (i < lst.size() && !foundPos) {
+                int currDeg = lst.get(i).getExpt();
+                int newDeg = newTerm.getExpt();
+                if (currDeg < newDeg) {
+                    foundPos = true;
+                } else {
+                    i++;
+                }
+            }
+            lst.set(i, newTerm); // Add in new term in sorted position
+        }
     }
 
     /**
