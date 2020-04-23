@@ -169,11 +169,7 @@ public final class RatTerm {
      * @spec.requires arg != null
      */
     public RatTerm sub(RatTerm arg) {
-        if (this.expt != arg.expt && !this.isZero() && !arg.isZero() && !this.isNaN() && !arg.isNaN()) {
-            throw new IllegalArgumentException();
-        } else {
-            return new RatTerm(coeff.sub(arg.coeff), Math.max(this.expt, arg.expt)); // Math.max for E: 0
-        }
+        return add(arg.negate());
     }
 
     /**
@@ -184,6 +180,9 @@ public final class RatTerm {
      * @spec.requires arg != null
      */
     public RatTerm mul(RatTerm arg) {
+        if (this.isNaN() || arg.isNaN()) {
+            return RatTerm.NaN;
+        }
         return new RatTerm(coeff.mul(arg.coeff), this.expt + arg.expt);
     }
 
@@ -196,6 +195,9 @@ public final class RatTerm {
      * @spec.requires arg != null
      */
     public RatTerm div(RatTerm arg) {
+        if (arg.isZero() || this.isNaN() || arg.isNaN()) {
+            return RatTerm.NaN;
+        }
         return new RatTerm(coeff.div(arg.coeff), this.expt - arg.expt);
     }
 
@@ -209,6 +211,9 @@ public final class RatTerm {
      * RatPoly, contains a rep. invariant stating that b is never less than 0.)
      */
     public RatTerm differentiate() {
+        if (this.isNaN()) {
+            return RatTerm.NaN;
+        }
         return new RatTerm(coeff.mul(new RatNum(expt)), expt - 1);
     }
 

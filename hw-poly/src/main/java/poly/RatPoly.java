@@ -256,8 +256,8 @@ public final class RatPoly {
         if (degIndex != -1) { // term w/ degree exists
             RatTerm term = lst.get(degIndex);
             lst.set(degIndex, term.add(newTerm));
-        } else { // term w/ degree does not exist
-            // Inv: 0 < i < n, 0 <= n < lst.size,
+        } else if (!newTerm.isZero()){ // term w/ degree does not exist and is not zero coefficient
+            // Inv: 0 <= i < n, 0 <= n < lst.size,
             // lst = {(C_0, E_0), (C_1, E_1), ..., (C_i, E_i), (C_n, E_n)} where (C_i, E_i) = newTerm
             boolean foundPos = false; // found position to insert
             int i = 0;
@@ -270,8 +270,11 @@ public final class RatPoly {
                     i++;
                 }
             }
-            lst.set(i, newTerm); // Add in new term in sorted position
+            lst.add(i, newTerm); // Add in new term in sorted position
         }
+        List<RatTerm> zeroCoeff = new ArrayList<RatTerm>();
+        zeroCoeff.add(RatTerm.ZERO);
+        lst.removeAll(zeroCoeff); // Make sure no 0 coeff
     }
 
     /**
@@ -280,8 +283,12 @@ public final class RatPoly {
      * @return a RatPoly equal to "0 - this"; if this.isNaN(), returns some r such that r.isNaN()
      */
     public RatPoly negate() {
-        // TODO: Fill in this method, then remove the RuntimeException
-        throw new RuntimeException("RatPoly.negate() is not yet implemented");
+        List<RatTerm> lst = new ArrayList<RatTerm>(terms); // copy terms
+        // Inv: 0 <= i < length(p), lst = {(-C_0, E_0), (-C_1, E_1), ..., (-C_i, E_i)}
+        for (int i = 0; i < lst.size(); i++) {
+            lst.set(i, lst.get(i).negate());
+        }
+        return new RatPoly(lst);
     }
 
     /**
@@ -293,8 +300,16 @@ public final class RatPoly {
      * @spec.requires p != null
      */
     public RatPoly add(RatPoly p) {
-        // TODO: Fill in this method, then remove the RuntimeException
-        throw new RuntimeException("RatPoly.add() is not yet implemented");
+        if (this.isNaN() || p.isNaN()) { // Cases to short-circuit
+            return RatPoly.NaN;
+        }
+        List<RatTerm> addLst = new ArrayList<RatTerm>(terms);
+        // Inv: 0 <= i < length(p), lst = q + p_0 + p_1 + p_i-1 where p_i is the ith term in p
+        for (int i = 0; i < p.terms.size(); i++) {
+            RatTerm pTerm = p.terms.get(i);
+            sortedInsert(addLst, pTerm);
+        }
+        return new RatPoly(addLst);
     }
 
     /**
@@ -306,8 +321,7 @@ public final class RatPoly {
      * @spec.requires p != null
      */
     public RatPoly sub(RatPoly p) {
-        // TODO: Fill in this method, then remove the RuntimeException
-        throw new RuntimeException("RatPoly.sub() is not yet implemented");
+        return add(p.negate());
     }
 
     /**
@@ -319,8 +333,18 @@ public final class RatPoly {
      * @spec.requires p != null
      */
     public RatPoly mul(RatPoly p) {
-        // TODO: Fill in this method, then remove the RuntimeException
-        throw new RuntimeException("RatPoly.mul() is not yet implemented");
+        List<RatTerm> lst = new ArrayList<RatTerm>();
+        // Inv: r = q_0*p_0 + q_1*p_0 + … + q_i-1*p_0 + q_0*p_1 + … + q_i-1*p_1 + … q_i-1*p_j-1,
+        // where q_i, p_j are the respective ith and jth term in q and p
+        for (int i = 0; i < terms.size(); i++) { // terms is our "q" polynomial
+            for (int j = 0; j < p.terms.size(); j++) { // p.terms is our "p" polynomial
+                RatTerm qTerm = terms.get(i);
+                RatTerm pTerm = p.terms.get(j);
+                RatTerm mulTerm = qTerm.mul(pTerm); // multiplied term
+                sortedInsert(lst, mulTerm);
+            }
+        }
+        return new RatPoly(lst);
     }
 
     /**
@@ -357,8 +381,31 @@ public final class RatPoly {
      * @spec.requires p != null
      */
     public RatPoly div(RatPoly p) {
-        // TODO: Fill in this method, then remove the RuntimeException
-        throw new RuntimeException("RatPoly.div() is not yet implemented");
+        List<RatTerm> lst = new ArrayList<RatTerm>();
+        boolean isDivided = false;
+        RatPoly dividend = new RatPoly(terms);
+        if (p.terms.isEmpty() || this.isNaN() || p.isNaN()) { // if p = 0 or p or this is NaN
+            return RatPoly.NaN;
+        }
+        // Let u be defined as our variable "dividend"
+        // Inv: lst = u_0/p_0 + u_1/p_0 + … + u_i/p_0 and degree of u_0 >= p_0,
+        // where u_i, p_0 are the respective ith and 0th term in u and p
+        while (!isDivided && !dividend.terms.isEmpty()) {
+            RatTerm uTerm = dividend.terms.get(0); // leading term
+            RatTerm pTerm = p.terms.get(0);
+            if (uTerm.getExpt() < pTerm.getExpt()) { // No more dividing needed, no longer divides into
+                isDivided = true;
+            } else { // u degree leading term >= p degree leading term
+                RatTerm divTerm = uTerm.div(pTerm);
+                RatPoly divPoly = new RatPoly(divTerm);
+                sortedInsert(lst, divTerm);
+                dividend = dividend.sub(divPoly.mul(p));
+                if (uTerm.getExpt() == pTerm.getExpt()) { // We finished dividing last term that could
+                    isDivided = true; // to short-circuit
+                }
+            }
+        }
+        return new RatPoly(lst);
     }
 
     /**
@@ -369,8 +416,16 @@ public final class RatPoly {
      * <p>The derivative of a polynomial is the sum of the derivative of each term.
      */
     public RatPoly differentiate() {
-        // TODO: Fill in this method, then remove the RuntimeException
-        throw new RuntimeException("RatPoly.differentiate() is not yet implemented");
+        List<RatTerm> lst = new ArrayList<RatTerm>();
+        // Let deriv(p_i) represent the derivative of the ith term of p
+        // Inv: 0 <= i < length(p), lst = deriv(p_0) + deriv(p_1) + ... + deriv(p_i-1)
+        for (RatTerm term : terms) {
+            RatTerm deriv = term.differentiate();
+            if (deriv.getExpt() >= 0) { // No negative expt
+                sortedInsert(lst, deriv);
+            }
+        }
+        return new RatPoly(lst);
     }
 
     /**
@@ -385,8 +440,18 @@ public final class RatPoly {
      * @spec.requires integrationConstant != null
      */
     public RatPoly antiDifferentiate(RatNum integrationConstant) {
-        // TODO: Fill in this method, then remove the RuntimeException
-        throw new RuntimeException("RatPoly.antiDifferentiate() unimplemented!");
+        List<RatTerm> lst = new ArrayList<RatTerm>();
+        // Let antideriv(p_i) represent the antiderivative of the ith term of p
+        // Inv: 0 <= i < length(p), lst = antideriv(p_0) + antideriv(p_1) + ... + antideriv(p_i-1)
+        for (RatTerm term : terms) {
+            if (!term.isZero()) { // No 0 terms
+                sortedInsert(lst, term.antiDifferentiate());
+            }
+        }
+        if (!integrationConstant.equals(RatNum.ZERO)) { // Add integration constant if not 0
+            sortedInsert(lst, new RatTerm(integrationConstant, 0));
+        }
+        return new RatPoly(lst);
     }
 
     /**
@@ -403,8 +468,14 @@ public final class RatPoly {
      * Double.NaN, return Double.NaN.
      */
     public double integrate(double lowerBound, double upperBound) {
-        // TODO: Fill in this method, then remove the RuntimeException
-        throw new RuntimeException("RatPoly.integrate() is not yet implemented");
+        if (this.isNaN() || Double.isNaN(lowerBound) || Double.isNaN(upperBound)){
+            return Double.NaN;
+        } else { // Polynomial and bounds are not NaN
+            // The area integral computations for upper and lower bounds
+            double upperArea = antiDifferentiate(RatNum.ZERO).eval(upperBound);
+            double lowerArea = antiDifferentiate(RatNum.ZERO).eval(lowerBound);
+            return upperArea - lowerArea;
+        }
     }
 
     /**
@@ -415,8 +486,17 @@ public final class RatPoly {
      * is 5, and "x^2-x" evaluated at 3 is 6. If (this.isNaN() == true), return Double.NaN.
      */
     public double eval(double d) {
-        // TODO: Fill in this method, then remove the RuntimeException
-        throw new RuntimeException("RatPoly.eval() is not yet implemented");
+        if (this.isNaN()) {
+            return Double.NaN;
+        } else { // not a NaN polynomial
+            double val = 0.0;
+            // Inv: 0 <= i < length(p), val = eval(p_0) + eval(p_1) + ... + eval(p_i-1),
+            // where p_i is the ith term in p
+            for (RatTerm term : terms) {
+                val += term.eval(d);
+            }
+            return val;
+        }
     }
 
     /**
