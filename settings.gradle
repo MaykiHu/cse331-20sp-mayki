@@ -2,3 +2,4 @@ rootProject.name = 'cse331'
 
 include 'hw-setup'
 include 'hw-poly'
+include 'hw-graph'
