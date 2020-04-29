@@ -1,0 +1,8 @@
+#Create a node
+created node n1
+
+#Create another node
+created node n2
+
+#Create an edge
+created edge n1 n2 e1
