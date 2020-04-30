@@ -1,0 +1,11 @@
+#Create a graph
+CreateGraph graph1
+
+#Create a node
+CreateNode 1
+
+#Add a node to graph
+AddNode graph1 n1
+
+#Checks if empty, when it isn't empty
+IsEmpty graph1

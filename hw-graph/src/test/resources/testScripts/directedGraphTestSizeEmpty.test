@@ -1,0 +1,5 @@
+#Create a graph
+CreateGraph graph1
+
+#Gets size of an empty graph
+GetSize graph1

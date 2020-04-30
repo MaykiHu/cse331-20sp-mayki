@@ -25,21 +25,23 @@ public interface Graph {
      * Removes the node from the graph.
      * @param node the node to be removed from the graph.
      * @spec.effects removes the node from the graph.
+     * @return the node that was removed
      */
-    void removeNode(Node node);
+    Node removeNode(Node node);
 
     /**
      * Removes the edge from this graph.
      * @param edge the edge to be removed from the graph
      * @spec.effects removes the edge from the graph
+     * @return the edge that was removed
      */
-    void removeEdge(Edge edge);
+    Edge removeEdge(Edge edge);
 
     /**
      * Returns the string representation of the nodes in this graph.
      * @return the String representation of the Nodes in this graph.
      */
-    String getNodes();
+    String listNodes();
 
     /**
      * Returns the size of this graph.

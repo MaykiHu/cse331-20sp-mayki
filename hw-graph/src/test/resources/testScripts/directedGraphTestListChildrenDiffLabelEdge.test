@@ -1,0 +1,19 @@
+#Create a graph
+CreateGraph graph1
+
+#Create a node
+CreateNode 1
+
+#Create a node
+CreateNode 2
+
+#Add a pair of nodes to the graph
+AddNode graph1 n1
+AddNode graph1 n2
+
+#Add a pair of edges with the same parent-child to the graph, diff labels
+AddEdge graph1 n1 n2 e1
+AddEdge graph1 n1 n2 e2
+
+#Lists children of node n1 in graph1
+ListChildren graph1 n1

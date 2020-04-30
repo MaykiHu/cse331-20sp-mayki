@@ -50,9 +50,10 @@ public class DirectedGraph implements Graph {
      * @spec.effects Removes a node from the graph, if in the graph.
      * Otherwise, does not remove.  Note that removing this node removes
      * any nodes/edges in contact with this node.
+     * @return the node that was removed
      */
     @Override
-    public void removeNode(Node node) {
+    public Node removeNode(Node node) {
         throw new RuntimeException("DirectedGraph.removeNode() is not yet implemented.");
     }
 
@@ -62,11 +63,12 @@ public class DirectedGraph implements Graph {
      * @spec.requires edge != null
      * @spec.effects Removes the directed edge from the graph, if in the graph.
      * Otherwise, does not.  Note that, since it's a directed edge, only the edge with
-     * direction startNode to endNode is removed from the graph.  It is possible
-     * for a node to be an "island" node (no edges from nor to it) after removal.
+     * direction startNode to endNode is removed from the graph.  Both nodes connected
+     * by this edge still remain after removal.
+     * @return the edge that was removed
      */
     @Override
-    public void removeEdge(Edge edge) {
+    public Edge removeEdge(Edge edge) {
         throw new RuntimeException("DirectedGraph.removePath() is not yet implemented.");
     }
 
@@ -80,7 +82,7 @@ public class DirectedGraph implements Graph {
      * @return a String representation of this graph.
      */
     @Override
-    public String getNodes() {
+    public String listNodes() {
         throw new RuntimeException("DirectedGraph.getNodes() is not yet implemented.");
     }
 
@@ -98,7 +100,7 @@ public class DirectedGraph implements Graph {
      * @param parentNode a node on the graph
      * @return a String representation of the children node(edgeLabel) of this parent node
      */
-    public String getChildren(Node parentNode) {
+    public String listChildren(Node parentNode) {
         throw new RuntimeException("DirectedGraph.getChildren() is not yet implemented.");
     }
 

@@ -1,0 +1,15 @@
+#Create a graph
+CreateGraph graph1
+
+#Create a node
+CreateNode 1
+
+#Add a node to graph
+AddNode graph1 n1
+
+#Add a node to graph
+AddNode graph1 n2
+
+#Remove a pair of nodes from the graph
+RemoveNode graph1 n1
+RemoveNode graph1 n2

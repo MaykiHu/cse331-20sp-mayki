@@ -1,0 +1,5 @@
+#Create a graph
+created graph graph1
+
+#Checks if empty, when it is empty
+graph1 is empty

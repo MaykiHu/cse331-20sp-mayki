@@ -1,0 +1,5 @@
+#Create a graph
+created graph graph1
+
+#Gets size of an empty graph
+size of graph1 is 0

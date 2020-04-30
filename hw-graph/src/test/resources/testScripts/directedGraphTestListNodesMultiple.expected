@@ -1,0 +1,13 @@
+#Create a graph
+created graph graph1
+
+#Create a pair of nodes
+created node n1
+created node n2
+
+#Add a pair of nodes to the graph
+added node n1 to graph1
+added node n2 to graph1
+
+#List nodes in graph
+graph1 contains: n1 n2
