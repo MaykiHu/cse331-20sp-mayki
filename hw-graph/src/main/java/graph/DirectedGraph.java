@@ -11,12 +11,38 @@ public class DirectedGraph implements Graph {
 
     private final Map<Node, Set<Edge>> graph;
 
+    // Abstraction Function:
+    //   A DirectedGraph g represents a directed graph which have nodes and each node
+    //   has a set of outgoing edges associated with that node.  This means,
+    //   by definition, that a node with no outgoing edges is either an
+    //   end node or an island node.
+    //   There are no duplicate nodes or edges and the graph is mutable as nodes and edges
+    //   can be added/removed from a graph directly.
+    //   If a graph has no nodes (thus, no edges), the graph represents an empty non-null graph.
+
+    // Representation invariant for every DirectedGraph g:
+    // g.graph != null &&
+    // forall i such that (0 <= i < g.graph.size()), g.graph.get(i) != null &&
+    // forall i such that (0 <= i < g.graph.size() - 1), g.graph.get(i) != g.graph.get(i+1) &&
+    // forall j such that (0 <= j < g.graph.get(i).size()), g.graph.get(i).get(j) != null &&
+    // forall j such that (0 <= j < g.graph.get(i).size() - 1),
+    //      g.graph.get(i).get(j) != g.graph.get(i).get(i+1) &&
+    // In other words,
+    //   * the graph field always points to some usable object
+    //   * no node in the graph is null
+    //   * there are no duplicate nodes in the graph (by definition of a map)
+    //   * no outgoing edge in the graph for any node is null
+    //   * there are no duplicate outgoing edges in the graph for any node (by definition of a set)
+
+    // Change this to run expensive methods in checkRep() if set to true, otherwise does not run.
+    private final boolean needsCheckRep = true;
+
     /**
      * Constructs a DirectedGraph.
      * @spec.effects Constructs a new DirectedGraph.
      */
     public DirectedGraph() {
-        throw new RuntimeException("DirectedGraph constructor is not yet implemented.");
+         graph = new TreeMap<Node, Set<Edge>>(new NodeComp());
     }
 
     /**
@@ -27,7 +53,10 @@ public class DirectedGraph implements Graph {
      */
     @Override
     public void addNode(Node node) {
-        throw new RuntimeException("DirectedGraph.addNode() is not yet implemented.");
+        if (!graph.containsKey(node)) { // If node not in graph
+            graph.put(node, new TreeSet<Edge>(new EdgeComp()));
+        }
+        checkRep();
     }
 
     /**
@@ -40,7 +69,15 @@ public class DirectedGraph implements Graph {
      */
     @Override
     public void addEdge(Edge edge) {
-        throw new RuntimeException("DirectedGraph.addEdge() is not yet implemented.");
+        Node startNode = edge.getStart();
+        Node endNode = edge.getEnd();
+        // If edge has valid arguments to be added
+        if (graph.containsKey(startNode) && graph.containsKey(endNode)) {
+            if (!graph.get(startNode).contains(edge)) { // And edge not in graph already
+                graph.get(startNode).add(edge);
+            }
+        }
+        checkRep();
     }
 
     /**
@@ -54,7 +91,22 @@ public class DirectedGraph implements Graph {
      */
     @Override
     public Node removeNode(Node node) {
-        throw new RuntimeException("DirectedGraph.removeNode() is not yet implemented.");
+        if (node != null && graph.containsKey(node)) { // graph has this node
+            graph.remove(node); // Removes this node and all its outgoing edges
+            Iterator<Map.Entry<Node, Set<Edge>>> itr = graph.entrySet().iterator();
+            while (itr.hasNext()) { // Traverses all remaining nodes
+                Map.Entry<Node, Set<Edge>> entry = itr.next();
+                Iterator<Edge> eItr = entry.getValue().iterator();
+                while (eItr.hasNext()) { // Traverses outgoing edges of remaining node
+                    Edge edge = eItr.next();
+                    if (edge.getEnd().equals(node)) { // If outgoing edge is to this removed node
+                        removeEdge(edge); // Removes this outgoing edge leading to removed node
+                    }
+                }
+            }
+            return node; // Node that was removed
+        }
+        return null; // No node was removed
     }
 
     /**
@@ -69,7 +121,14 @@ public class DirectedGraph implements Graph {
      */
     @Override
     public Edge removeEdge(Edge edge) {
-        throw new RuntimeException("DirectedGraph.removePath() is not yet implemented.");
+        Node startNode = edge.getStart();
+        if (graph.containsKey(startNode)) { // If edge has startNode in graph
+            if (graph.get(startNode).contains(edge)) { // If edge is in graph
+                graph.get(startNode).remove(edge); // Remove edge requested for removal
+                return edge; // Edge that was removed
+            }
+        }
+        return null; // No edge was removed
     }
 
     /**
@@ -83,7 +142,13 @@ public class DirectedGraph implements Graph {
      */
     @Override
     public String listNodes() {
-        throw new RuntimeException("DirectedGraph.getNodes() is not yet implemented.");
+        String nodeList = "graph contains:";
+        Iterator<Map.Entry<Node, Set<Edge>>> itr = graph.entrySet().iterator();
+        while (itr.hasNext()) { // Traverses nodes in the graph (alphabetical already b/c sorted)
+            Node node = itr.next().getKey();
+            nodeList += " " + node.toString(); // Append node as string
+        }
+        return nodeList;
     }
 
     /**
@@ -101,20 +166,35 @@ public class DirectedGraph implements Graph {
      * @return a String representation of the children node(edgeLabel) of this parent node
      */
     public String listChildren(Node parentNode) {
-        throw new RuntimeException("DirectedGraph.getChildren() is not yet implemented.");
+        String childrenList = "the children of " + parentNode.toString() + " are:";
+        Iterator<Edge> eItr = graph.get(parentNode).iterator();
+        while (eItr.hasNext()) { // Traverses through edges of parentNode
+            Edge childEdge = eItr.next();
+            childrenList += " " + childEdge.getEnd() + "(" + childEdge.getLabel() + ")";
+        }
+        return childrenList;
     }
 
     /**
-     * Returns a string representation of this graph in the form of the children nodes
-     * of each parent node.  Each parent node and their children are separated by a new line.
-     * Parent nodes and child nodes are listed in alphabetical order.
-     * Ex: the children of n0 are:
+     * Returns a string representation of this graph in the form of all the nodes, and
+     * then the children nodes of each parent node.  The list of nodes and
+     * each parent node and their children are separated by a new line.
+     * Nodes, parent nodes and child nodes are listed in alphabetical order.
+     * Ex:
+     *     graph contains: n0 n1 n2
+     *     the children of n0 are:
      *     the children of n1 are: n2(e8)
+     *     the children of n2 are:
      * @return a String representation of this graph.
      */
     @Override
     public String toString() {
-        throw new RuntimeException("DirectedGraph.toString() is not yet implemented.");
+        String graphList = listNodes() + "\n";
+        Iterator<Map.Entry<Node, Set<Edge>>> itr = graph.entrySet().iterator();
+        while (itr.hasNext()) { // Traverses each node in graph
+            graphList += listChildren(itr.next().getKey()) + "\n"; // Append children of this node
+        }
+        return graphList;
     }
 
 
@@ -124,7 +204,7 @@ public class DirectedGraph implements Graph {
      */
     @Override
     public int size() {
-        throw new RuntimeException("DirectedGraph.size() is not yet implemented.");
+        return graph.size();
     }
 
     /**
@@ -133,22 +213,49 @@ public class DirectedGraph implements Graph {
      */
     @Override
     public boolean isEmpty() {
-        throw new RuntimeException("DirectedGraph.isEmpty() is not yet implemented.");
+        return graph.size() == 0;
     }
 
+    /*
+        Throws an exception if the representation invariant is violated.
+     */
     private void checkRep() {
-        throw new RuntimeException("DirectedGraph.checkRep() is not yet implemented.");
-    }
-
-    private class NodeComp implements Comparator<Node> {
-        public int compare(Node node1, Node node2) {
-            throw new RuntimeException("NodeComp.compare() is not yet implemented.");
+        assert (graph != null); // graph cannot be null
+        if (needsCheckRep) { // Only check expensive checks if needed
+            Iterator<Map.Entry<Node, Set<Edge>>> itr = graph.entrySet().iterator();
+            while (itr.hasNext()) {
+                Map.Entry<Node, Set<Edge>> entry = itr.next();
+                assert (entry.getKey() != null) : "Graph cannot have a null node";
+                Iterator<Edge> eItr = entry.getValue().iterator();
+                while (eItr.hasNext()) {
+                    Edge e = eItr.next();
+                    assert (e != null) : "Graph cannot have a null edge";
+                }
+            }
         }
     }
 
+    /*
+        Computes how to compare between two nodes
+     */
+    private class NodeComp implements Comparator<Node> {
+        public int compare(Node node1, Node node2) {
+            // Since toString() represents each node distinctly, we can compare via toString()
+            return node1.toString().compareTo(node2.toString());
+        }
+    }
+
+    /*
+        Computes how to compare between two edges
+     */
     private class EdgeComp implements Comparator<Edge> {
         public int compare(Edge edge1, Edge edge2) {
-            throw new RuntimeException("EdgeComp.compare() is not yet implemented.");
+            // Since toString() represents each edge/node distinctly, we can compare via toString()
+            // We have to rearrange the toString() such that it evaluates
+            // startNode -> endNode -> label
+            String e1 = edge1.getStart().toString() + edge1.getEnd().toString() + edge1.getLabel();
+            String e2 = edge2.getStart().toString() + edge2.getEnd().toString() + edge2.getLabel();
+            return e1.compareTo(e2);
         }
     }
 }

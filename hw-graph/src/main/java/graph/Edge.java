@@ -9,6 +9,22 @@ public class Edge {
     private final Node endNode;
     private final String label;
 
+    // Abstraction Function:
+    //   An Edge e is immutable and contains two non-null different nodes, a startNode and endNode,
+    //   which indicates the edges direction, and may have a label associating these two nodes.
+    //   This is a visual representation: startNode --(label)--> endNode
+    //   Note that the label is optional, indicated by ( ).
+    //   If no label, label is null.  Otherwise, label contains a value.
+
+    // Representation invariant for every Edge e:
+    // (e.startNode != null && e.endNode != null) &&
+    // (e.startNode != e.endNode) &&
+    // (e.label == null || e.label.length() > 0)
+    // In other words,
+    //   * e.startNode and e.endNode are always non-null
+    //   * e.startNode is a different node than e.endNode
+    //   * e.label must be either null or not an empty string
+
     /**
      * Constructs a new Edge.
      * @param startNode the node at the beginning of the edge
@@ -18,7 +34,10 @@ public class Edge {
      * @spec.effects Constructs a new Edge = (startNode, endNode, label).
      */
     public Edge(Node startNode, Node endNode, String label) {
-        throw new RuntimeException("Edge constructor is not yet implemented.");
+        this.startNode = startNode;
+        this.endNode = endNode;
+        this.label = label;
+        checkRep();
     }
 
     /**
@@ -26,7 +45,7 @@ public class Edge {
      * @return a Node, that is the starting node of this edge
      */
     public Node getStart() {
-        throw new RuntimeException("Edge.getStart() is not yet implemented.");
+        return startNode; // Since Node is immutable, returning the node is fine
     }
 
     /**
@@ -34,7 +53,7 @@ public class Edge {
      * @return a Node, that is the ending node of the edge
      */
     public Node getEnd() {
-        throw new RuntimeException("Edge.getEnd() is not yet implemented.");
+        return endNode; // Since Node is immutable, returning the node is fine
     }
 
     /**
@@ -42,7 +61,7 @@ public class Edge {
      * @return a String of the label associated with this edge
      */
     public String getLabel() {
-        throw new RuntimeException("Edge.getLabel() is not yet implemented.");
+        return label;
     }
 
     /**
@@ -52,7 +71,7 @@ public class Edge {
      */
     @Override
     public String toString() {
-        throw new RuntimeException("Edge.toString() is not yet implemented.");
+        return "e" + label + " from " + startNode.toString() + " to " + endNode.toString();
     }
 
     /**
@@ -62,7 +81,8 @@ public class Edge {
      */
     @Override
     public int hashCode() {
-        throw new RuntimeException("Edge.hashCode() is not yet implemented.");
+        // label.hashCode() = 0 if label is null, by definition of hashCode in javadoc
+        return startNode.hashCode() + endNode.hashCode() + label.hashCode();
     }
 
     /**
@@ -74,10 +94,20 @@ public class Edge {
      */
     @Override
     public boolean equals(Object obj) {
-        throw new RuntimeException("Edge.equals() is not yet implemented.");
+        if (!(obj instanceof Edge)) {
+            return false; // Not an Edge
+        } // Otherwise, check if edges are equal
+        Edge e = (Edge) obj;
+        return startNode.equals(e.startNode) && endNode.equals(e.endNode) && label.equals(e.label);
     }
 
+    /*
+        Throws an exception if the representation invariant is violated.
+     */
     private void checkRep() {
-        throw new RuntimeException("checkRep() is not yet implemented.");
+        assert (startNode != null) : "startNode cannot be null";
+        assert (endNode != null) : "endNode cannot be null";
+        assert (!startNode.equals(endNode)) : "startNode cannot be equal to endNode";
+        assert (label != null && label.length() == 0) : "label must be null or not an empty string";
     }
 }

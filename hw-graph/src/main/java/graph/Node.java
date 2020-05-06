@@ -7,6 +7,15 @@ package graph;
 public class Node {
     private final String data;
 
+    // Abstraction Function:
+    //   A Node n is immutable and solely associated with the value of its data, which is non-null.
+
+    // Representation invariant for every Node n:
+    // n.data != null && n.length() > 0
+    // In other words,
+    //   * n.data is always non-null
+    //   * n.data is not an empty string
+
     /**
      * Constructs a new Node.
      * @param data the value of the new Node
@@ -14,7 +23,8 @@ public class Node {
      * @spec.effects Constructs a new Node = data.
      */
     public Node(String data) {
-        throw new RuntimeException("Node constructor is not yet implemented.");
+        this.data = data;
+        checkRep();
     }
 
     /**
@@ -24,7 +34,7 @@ public class Node {
      */
     @Override
     public String toString() {
-        throw new RuntimeException("Node.toString() is not yet implemented.");
+        return "n" + data;
     }
 
     /**
@@ -34,7 +44,7 @@ public class Node {
      */
     @Override
     public int hashCode() {
-        throw new RuntimeException("Node.hashCode() is not yet implemented.");
+        return data.hashCode();
     }
 
     /**
@@ -46,10 +56,18 @@ public class Node {
      */
     @Override
     public boolean equals(Object obj) {
-        throw new RuntimeException("Node.equals() is not yet implemented.");
+        if (!(obj instanceof Node)) {
+            return false; // Not a Node
+        } // Otherwise, check if nodes equal
+        Node n = (Node) obj;
+        return data.equals(n.data);
     }
 
+    /*
+        Throws an exception if the representation invariant is violated.
+     */
     private void checkRep() {
-        throw new RuntimeException("checkRep() not yet implemented.");
+        assert (data != null) : "A node's data cannot be null";
+        assert (data.length() > 0) : "A node's data cannot be an empty string";
     }
 }

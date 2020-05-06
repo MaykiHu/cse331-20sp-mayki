@@ -1,0 +1,5 @@
+#Create a graph
+CreateGraph graph1
+
+#List nodes in graph
+ListNodes graph1
