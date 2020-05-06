@@ -11,10 +11,12 @@
 
 package graph.scriptTestRunner;
 
+import graph.DirectedGraph;
+import graph.Edge;
+import graph.Node;
+
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * This class implements a testing driver which reads test scripts
@@ -78,7 +80,7 @@ public class GraphTestDriver {
      * String -> Graph: maps the names of graphs to the actual graph
      **/
     // TODO for the student: Uncomment and parameterize the next line correctly:
-    //private final Map<String, _______> graphs = new HashMap<String, ________>();
+    private final Map<String, DirectedGraph> graphs = new HashMap<String, DirectedGraph>();
     private final PrintWriter output;
     private final BufferedReader input;
 
@@ -163,8 +165,8 @@ public class GraphTestDriver {
     private void createGraph(String graphName) {
         // TODO Insert your code here.
 
-        // graphs.put(graphName, ___);
-        // output.println(...);
+        graphs.put(graphName, new DirectedGraph());
+        output.println("created graph " + graphName);
     }
 
     private void addNode(List<String> arguments) {
@@ -181,8 +183,10 @@ public class GraphTestDriver {
     private void addNode(String graphName, String nodeName) {
         // TODO Insert your code here.
 
-        // ___ = graphs.get(graphName);
-        // output.println(...);
+         DirectedGraph testGraph = graphs.get(graphName);
+         Node newNode = new Node(nodeName.substring(1));
+         testGraph.addNode(newNode);
+         output.println("added node " + nodeName + " to " + graphName);
     }
 
     private void addEdge(List<String> arguments) {
@@ -201,9 +205,16 @@ public class GraphTestDriver {
     private void addEdge(String graphName, String parentName, String childName,
                          String edgeLabel) {
         // TODO Insert your code here.
+        // Revisit this.. not sure why it keeps failing to run this!  Just this fails.  :(
+        // IMPORTANT Go to office hours if cannot get debugged by deadline.
 
-        // ___ = graphs.get(graphName);
-        // output.println(...);
+        DirectedGraph testGraph = graphs.get(graphName);
+        Node parentNode = new Node(parentName.substring(1));
+        Node childNode = new Node(childName.substring(1));
+        Edge newEdge = new Edge(parentNode, childNode, edgeLabel);
+        testGraph.addEdge(newEdge);
+        output.println("added edge " + edgeLabel + " from " + parentName + " to " + childName +
+                " in " + graphName);
     }
 
     private void listNodes(List<String> arguments) {
@@ -218,8 +229,9 @@ public class GraphTestDriver {
     private void listNodes(String graphName) {
         // TODO Insert your code here.
 
-        // ___ = graphs.get(graphName);
-        // output.println(...);
+        DirectedGraph testGraph = graphs.get(graphName);
+        String listOfNodes = testGraph.listNodes();
+        output.println(listOfNodes);
     }
 
     private void listChildren(List<String> arguments) {
@@ -235,8 +247,9 @@ public class GraphTestDriver {
     private void listChildren(String graphName, String parentName) {
         // TODO Insert your code here.
 
-        // ___ = graphs.get(graphName);
-        // output.println(...);
+        DirectedGraph testGraph = graphs.get(graphName);
+        String listOfChildren = testGraph.listChildren(new Node(parentName.substring(1)));
+        output.println(listOfChildren);
     }
 
     /**
