@@ -10,7 +10,7 @@ public class Edge {
     private final String label;
 
     // Abstraction Function:
-    //   An Edge e is immutable and contains two non-null different nodes, a startNode and endNode,
+    //   An Edge e is immutable and contains two non-null nodes, a startNode and endNode,
     //   which indicates the edges direction, and may have a label associating these two nodes.
     //   This is a visual representation: startNode --(label)--> endNode
     //   Note that the label is optional, indicated by ( ).
@@ -18,7 +18,6 @@ public class Edge {
 
     // Representation invariant for every Edge e:
     // (e.startNode != null && e.endNode != null) &&
-    // (e.startNode != e.endNode) &&
     // (e.label == null || e.label.length() > 0)
     // In other words,
     //   * e.startNode and e.endNode are always non-null
@@ -81,8 +80,8 @@ public class Edge {
      */
     @Override
     public int hashCode() {
-        // label.hashCode() = 0 if label is null, by definition of hashCode in javadoc
-        return startNode.hashCode() + endNode.hashCode() + label.hashCode();
+        // hashCode by the toString() since the strings will be unique for each edge
+        return toString().hashCode();
     }
 
     /**
@@ -107,7 +106,6 @@ public class Edge {
     private void checkRep() {
         assert (startNode != null) : "startNode cannot be null";
         assert (endNode != null) : "endNode cannot be null";
-        assert (!startNode.equals(endNode)) : "startNode cannot be equal to endNode";
-        assert (label != null && label.length() == 0) : "label must be null or not an empty string";
+        assert (label != null && label.length() != 0) : "label must be null or not an empty string";
     }
 }

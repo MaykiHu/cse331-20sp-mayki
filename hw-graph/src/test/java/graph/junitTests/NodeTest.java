@@ -52,7 +52,7 @@ public final class NodeTest {
 
         // Check that equals does not neglect sign
         assertNotEquals(one, negOne);
-        assertNotEquals(negOne, negOne);
+        assertNotEquals(negOne, one);
     }
 
     /**

@@ -205,8 +205,6 @@ public class GraphTestDriver {
     private void addEdge(String graphName, String parentName, String childName,
                          String edgeLabel) {
         // TODO Insert your code here.
-        // Revisit this.. not sure why it keeps failing to run this!  Just this fails.  :(
-        // IMPORTANT Go to office hours if cannot get debugged by deadline.
 
         DirectedGraph testGraph = graphs.get(graphName);
         Node parentNode = new Node(parentName.substring(1));

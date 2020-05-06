@@ -1,8 +1,0 @@
-#Create a graph
-created graph graph1
-
-#Create a node
-created node n1
-
-#Lists children of node n1 in graph1
-the children of n1 in graph1 are:

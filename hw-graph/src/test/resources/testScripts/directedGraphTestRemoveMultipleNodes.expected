@@ -1,9 +1,6 @@
 #Create a graph
 created graph graph1
 
-#Create a node
-created node n1
-
 #Add a node to graph
 added node n1 to graph1
 
