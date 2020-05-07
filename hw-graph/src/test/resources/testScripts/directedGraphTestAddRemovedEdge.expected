@@ -11,5 +11,5 @@ added edge e1 from n1 to n2 in graph1
 #Removes an edge from the graph
 removed edge e1 from n1 to n2 in graph1
 
-#Add an edge to the graph
+#Adds an edge to the graph
 added edge e1 from n1 to n2 in graph1

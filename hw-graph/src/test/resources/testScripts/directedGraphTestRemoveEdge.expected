@@ -1,7 +1,7 @@
 #Create a graph
 created graph graph1
 
-#Add a pair of nodes to graph
+#Add a pair of nodes to the graph
 added node n1 to graph1
 added node n2 to graph1
 

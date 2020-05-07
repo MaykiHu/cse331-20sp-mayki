@@ -135,14 +135,29 @@ public class GraphTestDriver {
                 case "AddNode":
                     addNode(arguments);
                     break;
+                case "RemoveNode":
+                    removeNode(arguments);
+                    break;
                 case "AddEdge":
                     addEdge(arguments);
+                    break;
+                case "RemoveEdge":
+                    removeEdge(arguments);
                     break;
                 case "ListNodes":
                     listNodes(arguments);
                     break;
                 case "ListChildren":
                     listChildren(arguments);
+                    break;
+                case "IsEmpty":
+                    isEmpty(arguments);
+                    break;
+                case "GetSize":
+                    getSize(arguments);
+                    break;
+                case "ToString":
+                    toString(arguments);
                     break;
                 default:
                     output.println("Unrecognized command: " + command);
@@ -189,6 +204,24 @@ public class GraphTestDriver {
          output.println("added node " + nodeName + " to " + graphName);
     }
 
+    private void removeNode(List<String> arguments) {
+        if (arguments.size() != 2) {
+            throw new CommandException("Bad arguments to RemoveNode: " + arguments);
+        }
+
+        String graphName = arguments.get(0);
+        String nodeName = arguments.get(1);
+
+        removeNode(graphName, nodeName);
+    }
+
+    private void removeNode(String graphName, String nodeName) {
+        DirectedGraph testGraph = graphs.get(graphName);
+        Node oldNode = new Node(nodeName.substring(1));
+        testGraph.removeNode(oldNode);
+        output.println("removed node " + nodeName + " from " + graphName);
+    }
+
     private void addEdge(List<String> arguments) {
         if (arguments.size() != 4) {
             throw new CommandException("Bad arguments to AddEdge: " + arguments);
@@ -212,6 +245,31 @@ public class GraphTestDriver {
         Edge newEdge = new Edge(parentNode, childNode, edgeLabel);
         testGraph.addEdge(newEdge);
         output.println("added edge " + edgeLabel + " from " + parentName + " to " + childName +
+                " in " + graphName);
+    }
+
+    private void removeEdge(List<String> arguments) {
+        if (arguments.size() != 4) {
+            throw new CommandException("Bad arguments to RemoveEdge: " + arguments);
+        }
+
+        String graphName = arguments.get(0);
+        String parentName = arguments.get(1);
+        String childName = arguments.get(2);
+        String edgeLabel = arguments.get(3);
+
+        removeEdge(graphName, parentName, childName, edgeLabel);
+    }
+
+    private void removeEdge(String graphName, String parentName, String childName,
+                         String edgeLabel) {
+
+        DirectedGraph testGraph = graphs.get(graphName);
+        Node parentNode = new Node(parentName.substring(1));
+        Node childNode = new Node(childName.substring(1));
+        Edge oldEdge = new Edge(parentNode, childNode, edgeLabel);
+        testGraph.removeEdge(oldEdge);
+        output.println("removed edge " + edgeLabel + " from " + parentName + " to " + childName +
                 " in " + graphName);
     }
 
@@ -248,6 +306,52 @@ public class GraphTestDriver {
         DirectedGraph testGraph = graphs.get(graphName);
         String listOfChildren = testGraph.listChildren(new Node(parentName.substring(1)));
         output.println(listOfChildren);
+    }
+
+    private void isEmpty(List<String> arguments) {
+        if (arguments.size() != 1) {
+            throw new CommandException("Bad arguments to IsEmpty: " + arguments);
+        }
+
+        String graphName = arguments.get(0);
+        isEmpty(graphName);
+    }
+
+    private void isEmpty(String graphName) {
+        DirectedGraph testGraph = graphs.get(graphName);
+        String emptyStatus = " is not empty";
+        if (testGraph.isEmpty()) {
+            emptyStatus = " is empty";
+        }
+        output.println(graphName + emptyStatus);
+    }
+
+    private void getSize(List<String> arguments) {
+        if (arguments.size() != 1) {
+            throw new CommandException("Bad arguments to ListNodes: " + arguments);
+        }
+
+        String graphName = arguments.get(0);
+        getSize(graphName);
+    }
+
+    private void getSize(String graphName) {
+        DirectedGraph testGraph = graphs.get(graphName);
+        output.println("size of " + graphName + " is " + testGraph.size());
+    }
+
+    private void toString(List<String> arguments) {
+        if (arguments.size() != 1) {
+            throw new CommandException("Bad arguments to ListNodes: " + arguments);
+        }
+
+        String graphName = arguments.get(0);
+        toString(graphName);
+    }
+
+    private void toString(String graphName) {
+        DirectedGraph testGraph = graphs.get(graphName);
+        output.println(testGraph.toString());
     }
 
     /**

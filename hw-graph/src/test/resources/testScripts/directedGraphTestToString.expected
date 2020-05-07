@@ -11,7 +11,7 @@ added edge e1 from n1 to n2 in graph1
 added edge e2 from n1 to n3 in graph1
 
 #Lists what is the toString() of this graph
-graph1 contains: n1 n2 n3
-the children of n1 in graph1 are: n2(e1) n3(e2)
-the children of n2 in graph1 are:
-the children of n3 in graph1 are:
+graph contains: n1 n2 n3
+the children of n1 are: n2(e1) n3(e2)
+the children of n2 are:
+the children of n3 are:
