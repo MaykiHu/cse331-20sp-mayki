@@ -50,8 +50,21 @@ public interface Graph {
     int size();
 
     /**
+     * Returns the number of edges in this graph.
+     * @return an int; the number of edges in this graph
+     */
+    int getEdgeCount();
+
+    /**
      * Returns if graph is empty.
      * @return a boolean, true if graph is empty.  False otherwise.
      */
     boolean isEmpty();
+
+    /**
+     * Returns if graph contains node.
+     * @param node
+     * @return a boolean, true if graph contains node.  False otherwise.
+     */
+    boolean containsNode(Node node);
 }

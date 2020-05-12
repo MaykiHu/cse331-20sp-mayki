@@ -11,10 +11,14 @@
 
 package marvel;
 
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.*;
 
 /**
  * Parser utility to load the Marvel Comics dataset.
@@ -29,7 +33,7 @@ public class MarvelParser {
      * @spec.requires filename is a valid file in the resources/data folder.
      */
     // TODO: Replace 'void' with the type you want the parser to produce
-    public static void parseData(String filename) {
+    public static Map<String, Set<String>> parseData(String filename) {
         // You can use this code as an example for getting a file from the resources folder
         // in a project like this. If you access TSV files elsewhere in your code, you'll need
         // to use similar code. If you use this code elsewhere, don't forget:
@@ -51,5 +55,25 @@ public class MarvelParser {
 
         // TODO: Complete this method
         // Hint: You might want to create a new bean class to use with the OpenCSV Parser
+
+        CsvToBean<MarvelHeroModel> csvToBean = new CsvToBeanBuilder<MarvelHeroModel>(reader)
+                .withType(MarvelHeroModel.class)
+                .withIgnoreLeadingWhiteSpace(true)
+                .withSeparator('\t')
+                .build();
+        Iterator<MarvelHeroModel> csvHeroIterator = csvToBean.iterator();
+        // Comic titles with all heroes in common with the title
+        Map<String, Set<String>> comicsAndHeroes = new HashMap<>();
+
+        while (csvHeroIterator.hasNext()) {
+            MarvelHeroModel marvelRecord = csvHeroIterator.next();
+            String name = marvelRecord.getName();
+            String title = marvelRecord.getTitle();
+            if (!comicsAndHeroes.containsKey(title)) { // Title not known yet
+                comicsAndHeroes.put(title, new HashSet<>()); // New book slot
+            }
+            comicsAndHeroes.get(title).add(name); // Associate a hero to a title
+        }
+        return comicsAndHeroes;
     }
 }

@@ -68,6 +68,5 @@ public class Node {
      */
     private void checkRep() {
         assert (data != null) : "A node's data cannot be null";
-        assert (data.length() > 0) : "A node's data cannot be an empty string";
     }
 }

@@ -35,14 +35,17 @@ public class DirectedGraph implements Graph {
     //   * there are no duplicate outgoing edges in the graph for any node (by definition of a set)
 
     // Change this to run expensive methods in checkRep() if set to true, otherwise does not run.
-    private final boolean needsCheckRep = true;
+    private final boolean needsCheckRep = false;
+
+    private int edgeSize;
 
     /**
      * Constructs a DirectedGraph.
      * @spec.effects Constructs a new DirectedGraph.
      */
     public DirectedGraph() {
-         graph = new TreeMap<Node, Set<Edge>>(new NodeComp());
+         graph = new HashMap<>();
+         edgeSize = 0;
     }
 
     /**
@@ -54,7 +57,7 @@ public class DirectedGraph implements Graph {
     @Override
     public void addNode(Node node) {
         if (!graph.containsKey(node)) { // If node not in graph
-            graph.put(node, new TreeSet<Edge>(new EdgeComp()));
+            graph.put(node, new HashSet<>());
         }
         checkRep();
     }
@@ -75,6 +78,9 @@ public class DirectedGraph implements Graph {
         if (graph.containsKey(startNode) && graph.containsKey(endNode)) {
             if (!graph.get(startNode).contains(edge)) { // And edge not in graph already
                 graph.get(startNode).add(edge);
+                if (!graph.get(endNode).contains(edge)) { // Bidirectional edge counted once
+                    edgeSize++;
+                }
             }
         }
         checkRep();
@@ -132,6 +138,16 @@ public class DirectedGraph implements Graph {
     }
 
     /**
+     * Returns an unmodifiable set of edges associated with this node
+     * @param parentNode that is in this graph
+     * @spec.requires node is in graph
+     * @return an unmodifiable set of edges
+     */
+    public Set<Edge> getEdges(Node parentNode) {
+        return Collections.unmodifiableSet(graph.get(parentNode));
+    }
+
+    /**
      * Returns the string representation of the nodes in this graph.  Its output starts with:
      * graph contains:
      * and is followed, on the same line, by a space-separated list of the node data contained
@@ -142,8 +158,10 @@ public class DirectedGraph implements Graph {
      */
     @Override
     public String listNodes() {
+        Map<Node, Set<Edge>> sortedGraph = new TreeMap<>(new NodeComp());
+        sortedGraph.putAll(graph);
         String nodeList = "graph contains:";
-        Iterator<Map.Entry<Node, Set<Edge>>> itr = graph.entrySet().iterator();
+        Iterator<Map.Entry<Node, Set<Edge>>> itr = sortedGraph.entrySet().iterator();
         while (itr.hasNext()) { // Traverses nodes in the graph (alphabetical already b/c sorted)
             Node node = itr.next().getKey();
             nodeList += " " + node.toString(); // Append node as string
@@ -167,7 +185,9 @@ public class DirectedGraph implements Graph {
      */
     public String listChildren(Node parentNode) {
         String childrenList = "the children of " + parentNode.toString() + " are:";
-        Iterator<Edge> eItr = graph.get(parentNode).iterator();
+        Set<Edge> sortedEdges = new TreeSet<>(new EdgeComp());
+        sortedEdges.addAll(graph.get(parentNode));
+        Iterator<Edge> eItr = sortedEdges.iterator();
         while (eItr.hasNext()) { // Traverses through edges of parentNode
             Edge childEdge = eItr.next();
             childrenList += " " + childEdge.getEnd() + "(" + childEdge.getLabel() + ")";
@@ -190,13 +210,23 @@ public class DirectedGraph implements Graph {
     @Override
     public String toString() {
         String graphList = listNodes() + "\n";
-        Iterator<Map.Entry<Node, Set<Edge>>> itr = graph.entrySet().iterator();
+        Map<Node, Set<Edge>> sortedGraph = new TreeMap<>(new NodeComp());
+        sortedGraph.putAll(graph);
+        Iterator<Map.Entry<Node, Set<Edge>>> itr = sortedGraph.entrySet().iterator();
         while (itr.hasNext()) { // Traverses each node in graph
             graphList += listChildren(itr.next().getKey()) + "\n"; // Append children of this node
         }
         return graphList;
     }
 
+    /**
+     * Returns if graph contains node.
+     * @param node the node in question
+     * @return a boolean, true if node is in the graph.  False otherwise.
+     */
+    public boolean containsNode(Node node) {
+        return graph.containsKey(node);
+    }
 
     /**
      * Returns the size of this graph.
@@ -205,6 +235,14 @@ public class DirectedGraph implements Graph {
     @Override
     public int size() {
         return graph.size();
+    }
+
+    /**
+     * Returns the number of edges in this graph.
+     * @return an int; the number of edges in this graph
+     */
+    public int getEdgeCount() {
+        return edgeSize;
     }
 
     /**
