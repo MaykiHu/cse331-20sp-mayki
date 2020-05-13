@@ -138,68 +138,41 @@ public class DirectedGraph implements Graph {
     }
 
     /**
-     * Returns an unmodifiable set of edges associated with this node
-     * @param parentNode that is in this graph
-     * @spec.requires node is in graph
-     * @return an unmodifiable set of edges
-     */
-    public Set<Edge> getEdges(Node parentNode) {
-        return Collections.unmodifiableSet(graph.get(parentNode));
-    }
-
-    /**
-     * Returns the string representation of the nodes in this graph.  Its output starts with:
-     * graph contains:
-     * and is followed, on the same line, by a space-separated list of the node data contained
-     * in each node of the graph.  The nodes appear in alphabetical order.  There is a single
-     * space between the colon, the first node name, and any subsequent, but no space if no nodes.
-     * [Description from Homework 5 Spec]
-     * @return a String representation of this graph.
+     * Returns a alphabetically-sorted unmodifiable set of nodes associated with this graph
+     * Nodes are sorted alphabetically.
+     * @return an unmodifiable set of nodes of this graph
      */
     @Override
-    public String listNodes() {
+    public Set<Node> listNodes() {
         Map<Node, Set<Edge>> sortedGraph = new TreeMap<>(new NodeComp());
         sortedGraph.putAll(graph);
-        String nodeList = "graph contains:";
-        Iterator<Map.Entry<Node, Set<Edge>>> itr = sortedGraph.entrySet().iterator();
-        while (itr.hasNext()) { // Traverses nodes in the graph (alphabetical already b/c sorted)
-            Node node = itr.next().getKey();
-            nodeList += " " + node.toString(); // Append node as string
-        }
-        return nodeList;
+        return Collections.unmodifiableSet(sortedGraph.keySet());
     }
 
     /**
-     * Returns the string representation of the children nodes of this parent node.  Its output is:
-     * the children of 'parentNode' are:
-     * and is followed, on the same line, by a space-separated list of entries of the form
-     * node(edgeLabel), where node is a node in graphName to which there is an edge from parentNode
-     * and edgeLabel is the label on that edge. If there are multiple edges between two nodes,
-     * there should be a separate node(edgeLabel) entry for each edge.
-     * The nodes should appear in lexicographical (alphabetical) order by node name and secondarily
-     * by edge label, e.g. firstNode(someEdge) secondNode(edgeA) secondNode(edgeB) secondNode(edgeC)
-     * There is a single space between the colon and the first node name, but no space if there are
-     * no children.  [Description from Homework 5 Spec]
-     * @param parentNode a node on the graph
-     * @return a String representation of the children node(edgeLabel) of this parent node
+     * Returns a alphabetically-sorted unmodifiable set of children edges of this node
+     * Edges are sorted first by nodes alphabetically, then the label on the edge alphabetically.
+     * @param parentNode that is in this graph
+     * @param includeSelf boolean to include parent as a child, true if considering reflexive edges
+     * @spec.requires node is in graph, boolean is not null
+     * @return an unmodifiable set of edges in this graph, of this parent node
      */
-    public String listChildren(Node parentNode) {
-        String childrenList = "the children of " + parentNode.toString() + " are:";
+    @Override
+    public Set<Edge> listChildren(Node parentNode, boolean includeSelf) {
         Set<Edge> sortedEdges = new TreeSet<>(new EdgeComp());
-        sortedEdges.addAll(graph.get(parentNode));
-        Iterator<Edge> eItr = sortedEdges.iterator();
-        while (eItr.hasNext()) { // Traverses through edges of parentNode
-            Edge childEdge = eItr.next();
-            childrenList += " " + childEdge.getEnd() + "(" + childEdge.getLabel() + ")";
+        for (Edge child : graph.get(parentNode)) {
+            if (!child.getEnd().equals(parentNode) || includeSelf) { // considering reflexive
+                sortedEdges.add(child);
+            }
         }
-        return childrenList;
+        return Collections.unmodifiableSet(sortedEdges);
     }
 
     /**
      * Returns a string representation of this graph in the form of all the nodes, and
      * then the children nodes of each parent node.  The list of nodes and
      * each parent node and their children are separated by a new line.
-     * Nodes, parent nodes and child nodes are listed in alphabetical order.
+     * Nodes, parent nodes and child nodes and edges are listed in alphabetical order.
      * Ex:
      *     graph contains: n0 n1 n2
      *     the children of n0 are:
@@ -209,14 +182,28 @@ public class DirectedGraph implements Graph {
      */
     @Override
     public String toString() {
-        String graphList = listNodes() + "\n";
-        Map<Node, Set<Edge>> sortedGraph = new TreeMap<>(new NodeComp());
-        sortedGraph.putAll(graph);
-        Iterator<Map.Entry<Node, Set<Edge>>> itr = sortedGraph.entrySet().iterator();
-        while (itr.hasNext()) { // Traverses each node in graph
-            graphList += listChildren(itr.next().getKey()) + "\n"; // Append children of this node
+        String graphString = "graph contains:";
+        Set<Node> sortedNodes = listNodes();
+        List<Node> parentNodes = new ArrayList<>();
+        List<Set<Edge>> sortedChildren = new ArrayList<>();
+        // Saves all parent nodes in graph
+        for (Node node : sortedNodes) {
+            graphString += " " + node.toString();
+            parentNodes.add(node);
+            sortedChildren.add(listChildren(node, true));
         }
-        return graphList;
+        graphString += "\n";
+        int parentIndex = 0;
+        // Then, saves all children of those parent nodes
+        for (Set<Edge> childrenSet : sortedChildren) {
+            graphString += "the children of " + parentNodes.get(parentIndex) + " are:";
+            for (Edge child : childrenSet) {
+                graphString += " " + child.getEnd().toString() + "(" + child.getLabel() + ")";
+            }
+            graphString += "\n";
+            parentIndex++; // Go to next parent node
+        }
+        return graphString;
     }
 
     /**

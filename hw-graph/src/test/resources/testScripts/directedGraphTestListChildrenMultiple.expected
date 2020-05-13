@@ -11,4 +11,4 @@ added edge e1 from n1 to n2 in graph1
 added edge e2 from n1 to n3 in graph1
 
 #Lists children of node n1 in graph1
-the children of n1 are: n2(e1) n3(e2)
+the children of n1 in graph1 are: n2(e1) n3(e2)

@@ -5,4 +5,4 @@ created graph graph1
 added node n1 to graph1
 
 #List nodes in graph
-graph contains: n1
+graph1 contains: n1

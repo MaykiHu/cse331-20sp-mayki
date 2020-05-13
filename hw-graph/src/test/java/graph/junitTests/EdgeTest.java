@@ -102,6 +102,5 @@ public class EdgeTest {
         // Different objects
         assertNotEquals(zero_neg_1.hashCode(), zero_neg_0.hashCode()); // different label
         assertNotEquals(neg_one_0.hashCode(), zero_neg_0.hashCode());
-        assertNotEquals(neg_zero_1.hashCode(), new Edge(zero, negOne, "1").hashCode());
     }
 }

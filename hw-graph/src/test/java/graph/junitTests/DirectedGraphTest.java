@@ -48,9 +48,9 @@ public class DirectedGraphTest {
      */
     @Test
     public void testAddDupNode() {
-        String beforeNodes = directedGraph.listNodes();
+        String beforeNodes = directedGraph.toString();
         directedGraph.addNode(negOne); // negOne is already in the graph
-        assertEquals(beforeNodes, directedGraph.listNodes());
+        assertEquals(beforeNodes, directedGraph.toString());
     }
 
     /**
@@ -107,9 +107,9 @@ public class DirectedGraphTest {
      * Tests removing a node that is not in graph.  Graph is unchanged.
      */
     public void testRemoveNonExistentNode() {
-        String beforeGraph = directedGraph.listNodes();
+        String beforeGraph = directedGraph.toString();
         directedGraph.removeNode(two); // Graph does not have a node equivalent to two
-        assertEquals(beforeGraph, directedGraph.listNodes());
+        assertEquals(beforeGraph, directedGraph.toString());
     }
 
     /**

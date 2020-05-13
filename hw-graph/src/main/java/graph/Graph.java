@@ -1,5 +1,7 @@
 package graph;
 
+import java.util.Set;
+
 /**
  * An interface of the concept of a graph, which all types of graphs must follow.
  * Graphs have the ability to have Nodes and Edges which can be modified, can be empty
@@ -38,10 +40,18 @@ public interface Graph {
     Edge removeEdge(Edge edge);
 
     /**
-     * Returns the string representation of the nodes in this graph.
-     * @return the String representation of the Nodes in this graph.
+     * Returns the set of all nodes in this graph.
+     * @return a set; the set of all nodes in this graph
      */
-    String listNodes();
+    Set<Node> listNodes();
+
+    /**
+     * Returns the set of all edges to children of this parent node
+     * @param parentNode the parent node of the children in graph
+     * @param includeSelf boolean to include parent as a child, true if considering reflexive edges
+     * @return a set; the set of edges associated with this parent node
+     */
+    Set<Edge> listChildren(Node parentNode, boolean includeSelf);
 
     /**
      * Returns the size of this graph.
@@ -63,7 +73,7 @@ public interface Graph {
 
     /**
      * Returns if graph contains node.
-     * @param node
+     * @param node the node in question of being in graph
      * @return a boolean, true if graph contains node.  False otherwise.
      */
     boolean containsNode(Node node);

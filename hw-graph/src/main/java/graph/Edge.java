@@ -80,8 +80,7 @@ public class Edge {
      */
     @Override
     public int hashCode() {
-        // hashCode by the toString() since the strings will be unique for each edge
-        return toString().hashCode();
+        return startNode.hashCode() + endNode.hashCode() + label.hashCode();
     }
 
     /**
