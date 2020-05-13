@@ -1,0 +1,11 @@
+# Find a path with two "hops" (edges) using the mediumSizeSuperheroes.tsv dataset
+# This test exercises both the parser and BFS algorithm on a medium-sized graph
+
+# To run this test, the marvel dataset must exist at
+#   hw-marvel/src/main/resources/data/mediumSizeSuperheroes.tsv
+
+loaded graph mediumHeroes
+
+path from DR. STRANGE/STEPHEN  to SURTUR:
+DR. STRANGE/STEPHEN  to ANCIENT ONE via DRSTR2 13
+ANCIENT ONE to SURTUR via M/FEA 2

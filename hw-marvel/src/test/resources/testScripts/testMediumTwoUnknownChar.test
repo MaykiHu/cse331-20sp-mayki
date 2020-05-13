@@ -1,0 +1,9 @@
+# Find both no character path using the mediumSizeSuperheroes.tsv dataset
+# This test exercises both the parser and BFS algorithm on a medium-sized graph
+
+# To run this test, the marvel dataset must exist at
+#   hw-marvel/src/main/resources/data/mediumSizeSuperheroes.tsv
+
+LoadGraph mediumHeroes mediumSizeSuperheroes.tsv
+
+FindPath mediumHeroes may_ki ken_ni

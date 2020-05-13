@@ -305,6 +305,7 @@ public class MarvelTestDriver {
 
     private void listChildren(String graphName, String parentName) {
         DirectedGraph testGraph = graphs.get(graphName);
+        parentName = parentName.replaceAll("_", " ");
         Set<Edge> listOfChildren = testGraph.listChildren(new Node(parentName), false);
         String outputString = "the children of " + parentName + " in " + graphName + " are:";
         for (Edge child : listOfChildren) {

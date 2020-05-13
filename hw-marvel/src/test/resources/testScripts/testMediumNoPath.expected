@@ -1,0 +1,10 @@
+# Find no path using the mediumSizeSuperheroes.tsv dataset
+# This test exercises both the parser and BFS algorithm on a medium-sized graph
+
+# To run this test, the marvel dataset must exist at
+#   hw-marvel/src/main/resources/data/mediumSizeSuperheroes.tsv
+
+loaded graph mediumHeroes
+
+path from DR. STRANGE/STEPHEN to Ernst-the-Bicycling-Wizard:
+no path found

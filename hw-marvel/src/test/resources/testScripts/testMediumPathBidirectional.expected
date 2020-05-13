@@ -1,0 +1,12 @@
+# Find bidirectional path with only one "hop" (edge) using the mediumSizeSuperheroes.tsv dataset
+# This test exercises both the parser and BFS algorithm on a medium-sized graph
+
+# To run this test, the marvel dataset must exist at
+#   hw-marvel/src/main/resources/data/mediumSizeSuperheroes.tsv
+
+loaded graph mediumHeroes
+
+path from DR. STRANGE/STEPHEN  to ANCIENT ONE:
+DR. STRANGE/STEPHEN  to ANCIENT ONE via DRSTR2 13
+path from ANCIENT ONE to DR. STRANGE/STEPHEN :
+ANCIENT ONE to DR. STRANGE/STEPHEN  via DRSTR2 13

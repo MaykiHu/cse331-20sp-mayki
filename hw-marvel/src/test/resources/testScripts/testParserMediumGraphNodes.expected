@@ -1,0 +1,5 @@
+# Test the parser on a graph that contains 14 nodes
+# with varying edges each.
+
+loaded graph mediumHeroes
+mediumHeroes contains: ANCIENT ONE BARON MORDO/KARL MOR CLEA DORMAMMU DR. STRANGE/STEPHEN  ETERNITY/ADAM QADMON Ernst-the-Bicycling-Wizard Grossman-the-Youngest-of-them-all Notkin-of-the-Superhuman-Beard Perkins-the-Magical-Singing-Instructor SURTUR UMAR WONG ZOM
