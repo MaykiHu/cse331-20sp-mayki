@@ -1,0 +1,5 @@
+#Tests for the size of a large dataset, the number of nodes, from marvel.tsv
+#marvel.tsv should be a valid file under the marvel data folder
+
+LoadGraph largeHeroes marvel.tsv
+GetSize largeHeroes

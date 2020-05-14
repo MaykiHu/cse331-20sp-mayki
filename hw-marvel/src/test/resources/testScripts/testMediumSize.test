@@ -1,0 +1,5 @@
+#Tests for the size of a medium dataset, the number of nodes, from mediumSizeSuperheroes.tsv
+#mediumSizeSuperheroes.tsv should be a valid file under the marvel data folder
+
+LoadGraph mediumHeroes mediumSizeSuperheroes.tsv
+GetSize mediumHeroes

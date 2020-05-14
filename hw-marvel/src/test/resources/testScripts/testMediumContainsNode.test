@@ -1,0 +1,5 @@
+#Tests if node is in medium dataset, from mediumSizeSuperheroes.tsv
+#mediumSizeSuperheroes.tsv should be a valid file under the marvel data folder
+
+LoadGraph mediumHeroes mediumSizeSuperheroes.tsv
+ContainsNode mediumHeroes ANCIENT_ONE

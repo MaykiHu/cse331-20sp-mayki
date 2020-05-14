@@ -78,7 +78,7 @@ public class DirectedGraph implements Graph {
         if (graph.containsKey(startNode) && graph.containsKey(endNode)) {
             if (!graph.get(startNode).contains(edge)) { // And edge not in graph already
                 graph.get(startNode).add(edge);
-                if (!graph.get(endNode).contains(edge)) { // Bidirectional edge counted once
+                if (!startNode.equals(endNode)) { // Ignores reflexive
                     edgeSize++;
                 }
             }
@@ -98,6 +98,7 @@ public class DirectedGraph implements Graph {
     @Override
     public Node removeNode(Node node) {
         if (node != null && graph.containsKey(node)) { // graph has this node
+            edgeSize -= graph.get(node).size();
             graph.remove(node); // Removes this node and all its outgoing edges
             Iterator<Map.Entry<Node, Set<Edge>>> itr = graph.entrySet().iterator();
             while (itr.hasNext()) { // Traverses all remaining nodes
@@ -107,6 +108,9 @@ public class DirectedGraph implements Graph {
                     Edge edge = eItr.next();
                     if (edge.getEnd().equals(node)) { // If outgoing edge is to this removed node
                         removeEdge(edge); // Removes this outgoing edge leading to removed node
+                        if (!edge.getStart().equals(edge.getEnd())) {
+                            edgeSize--; // Reduce non-reflexive edge count
+                        }
                     }
                 }
             }
@@ -131,6 +135,9 @@ public class DirectedGraph implements Graph {
         if (graph.containsKey(startNode)) { // If edge has startNode in graph
             if (graph.get(startNode).contains(edge)) { // If edge is in graph
                 graph.get(startNode).remove(edge); // Remove edge requested for removal
+                if (!edge.getStart().equals(edge.getEnd())) {
+                    edgeSize--;
+                }
                 return edge; // Edge that was removed
             }
         }
@@ -225,8 +232,8 @@ public class DirectedGraph implements Graph {
     }
 
     /**
-     * Returns the number of edges in this graph.
-     * @return an int; the number of edges in this graph
+     * Returns the number of non-reflexive edges in this graph.
+     * @return an int; the number of non-reflexive edges in this graph
      */
     public int getEdgeCount() {
         return edgeSize;

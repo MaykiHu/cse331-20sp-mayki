@@ -1,0 +1,5 @@
+#Tests if node is in small dataset, from staffSuperheroes.tsv
+#staffSuperheroes.tsv should be a valid file under the marvel data folder
+
+loaded graph smallHeroes
+smallHeroes does contain Ernst-the-Bicycling-Wizard

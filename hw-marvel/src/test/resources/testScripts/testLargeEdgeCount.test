@@ -1,0 +1,5 @@
+#Tests for the edgeCount of a large dataset, from marvel.tsv
+#marvel.tsv should be a valid file under the marvel data folder
+
+LoadGraph largeHeroes marvel.tsv
+GetEdgeCount largeHeroes

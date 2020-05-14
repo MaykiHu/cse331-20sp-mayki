@@ -1,0 +1,5 @@
+#Tests for the size of a small dataset, the number of nodes, from staffSuperheroes.tsv
+#staffSuperheroes.tsv should be a valid file under the marvel data folder
+
+loaded graph smallHeroes
+size of smallHeroes is 4

@@ -1,0 +1,5 @@
+#Tests for the edgeCount of a small dataset, from staffSuperheroes.tsv
+#staffSuperheroes.tsv should be a valid file under the marvel data folder
+
+loaded graph smallHeroes
+Number of edges in smallHeroes is: 14

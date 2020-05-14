@@ -1,0 +1,5 @@
+#Tests if node is in large dataset, from marvel.tsv
+#marvel.tsv should be a valid file under the marvel data folder
+
+loaded graph largeHeroes
+largeHeroes does not contain may ki

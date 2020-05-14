@@ -1,0 +1,5 @@
+#Tests for the edgeCount of a medium dataset, from mediumSizeSuperheroes.tsv
+#mediumSizeSuperheroes.tsv should be a valid file under the marvel data folder
+
+LoadGraph mediumHeroes mediumSizeSuperheroes.tsv
+GetEdgeCount mediumHeroes

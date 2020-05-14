@@ -121,6 +121,9 @@ public class MarvelTestDriver {
                 case "GetEdgeCount":
                     getEdgeCount(arguments);
                     break;
+                case "ContainsNode":
+                    containsNode(arguments);
+                    break;
                 default:
                     output.println("Unrecognized command: " + command);
                     break;
@@ -128,6 +131,27 @@ public class MarvelTestDriver {
         } catch (Exception e) {
             output.println("Exception: " + e.toString());
         }
+    }
+
+    private void containsNode(List<String> arguments) {
+        if (arguments.size() != 2) {
+            throw new CommandException("Bad arguments to ContainsNode: " + arguments);
+        }
+        String graphName = arguments.get(0);
+        String nodeName = arguments.get(1);
+        containsNode(graphName, nodeName);
+    }
+
+    private void containsNode(String graphName, String nodeName) {
+        DirectedGraph testGraph = graphs.get(graphName);
+        nodeName = nodeName.replaceAll("_", " ");
+        String outputString = graphName + " does ";
+        if (testGraph.containsNode(new Node(nodeName))) {
+            outputString += "contain " + nodeName;
+        } else { // Does not contain node
+            outputString += "not contain " + nodeName;
+        }
+        output.println(outputString);
     }
 
     private void getEdgeCount(List<String> arguments) {

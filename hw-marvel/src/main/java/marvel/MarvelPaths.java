@@ -18,9 +18,86 @@ public class MarvelPaths {
      *  Where the rep invariant would go
      */
 
-    // Commands to communicate from client to the model universe
+    // Commands to communicate from client to the marvel universe
     public static void main(String[] args) {
+        PrintWriter output = new PrintWriter(System.out, true);
+        Scanner userInput = new Scanner(System.in);
+        introPrompt(output); // Tells user how to use program
+        interact(output, userInput); // User interacts with program
+    }
 
+    /*
+     *  Introduction to user on how to use program
+     */
+    private static void introPrompt(PrintWriter output) {
+        output.println("Hey there, I'm Marvel Path.");
+        output.println("I can help you find a path between two characters!");
+        output.println("The catch is, I've only studied at Marvel University..");
+        output.println("So I only am familiar with Marvel characters. Yay~ Marvel-U!!");
+        output.println("You can try me with other characters though.");
+        output.println("I'll still try to find them, but no guarantees that I'll find them.  :P");
+        output.println("I'm kinda sassy and prefer you know the correct Marvel name format");
+        output.println("So at least capitalize how the Marvel characters would be addressed.");
+        output.println("I'll be nice and handle spacing or underscores for you.  Your choice.");
+        output.println("If you use spaces, use spaces.  Don't mix spaces with underscores.");
+        output.println("For example: ANCIENT ONE or ANCIENT_ONE is ok, but not aNcIeNt OnE!");
+        output.println("Leave your meme formatting elsewhere or I won't find them for you!  >:(");
+    }
+
+    /*
+     * Interacts with the user through console to find a path between two characters
+     * @param output where the results are printed to
+     * @param userInput where the user responds through
+     */
+    private static void interact(PrintWriter output, Scanner userInput) {
+        DirectedGraph marvelUniverse = setupUniverse(fileName);
+        // Obtain user input
+        output.println("Who's the first character leading the path?");
+        String startChar = userInput.nextLine();
+        output.println("Who's the second character at the end of the path?");
+        String endChar = userInput.nextLine();
+        output.println("Thanks.  Lemme look back into my Marvel-U history notes.");
+
+        // Format user input and search
+        startChar = format(startChar);
+        endChar = format(endChar);
+        findPath(marvelUniverse, startChar, endChar, output);
+
+        // Keep interacting until quit
+        output.println("Would you require any more assistance?");
+        boolean keepRunning = true;
+        String response = null;
+        while (keepRunning) {
+            output.println("Type case-sensitive Y or y for more path help, N or n if you're done.");
+            response = userInput.nextLine();
+            boolean respondedYes = response.equalsIgnoreCase("Y");
+            boolean respondedNo = response.equalsIgnoreCase("N");
+            if (respondedYes) {
+                keepRunning = false;
+                interact(output, userInput);
+            } else if (respondedNo) {
+                output.println("Well, have a good day.  I'll get going then.  See ya next time.");
+                output.println("You can call me again when you need me.");
+                keepRunning = false;
+                System.exit(0); // Quit program
+            } else { // Invalid response, not yes or no to keep program running.. so keep running
+                output.println("Hey!!  I said type Y/y or N/n.  Like, c'mon!  >:(");
+            }
+        }
+    }
+
+    /*
+     * Formats the charName string into one accepted by marvel parsing
+     * @param charName the string of the marvel character
+     * @return a String; the formatted string of a marvel character
+     * @spec.requires charName must only have underscores, letters and no spaces
+     *                or spaces, letters, and no underscores
+     */
+    private static String format(String charName) {
+        if (charName.contains("_")) {
+            return charName.replaceAll("_", " "); // proper lookup format for " " as "_"
+        }
+        return charName;
     }
 
     /*
@@ -60,14 +137,16 @@ public class MarvelPaths {
 
     /*
      *  Given the names of two characters, searches and returns a path through the graph
-     *  connecting them.  Returns the lexicographically least path, null if no path
-     *  and prints output if specified to a printer, null meaning otherwise not printed.
+     *  connecting them.  Returns the lexicographically least path; null if no or invalid path,
+     *  and prints output if specified to a printer; null for printer means no printing.
      *  If printed, one expects below behavior:
      *  Cases:
+     *      (return null)
      *      If no path found, we get:
      *      path from CHAR 1 to CHAR N:
      *      no path found
      *
+     *      (return null)
      *      If a character name CHAR was not in the original dataset, we get:
      *      unknown character CHAR
      *
@@ -84,6 +163,7 @@ public class MarvelPaths {
      *  @param endChar, the String ending character/hero of the path
      *  @param output, the PrintWriter where output is printed
      *  @spec.requires startChar, endChar, and output are not null, output is valid destination
+     *  @spec.requires if using PrintWriter of System.out, remember to enter true to flush
      */
     public static List<Edge> findPath(DirectedGraph universe, String startChar,
                                       String endChar, PrintWriter output) {
@@ -92,10 +172,10 @@ public class MarvelPaths {
         // Case(s) where characters aren't in the graph
         if (!universe.containsNode(start) || !universe.containsNode(dest)) {
             String unknownFormat = "unknown character ";
-            if (!universe.containsNode(start)) {
+            if (!universe.containsNode(start) && output != null) {
                 output.println(unknownFormat + startChar);
             }
-            if (!universe.containsNode(dest)) {
+            if (!universe.containsNode(dest) && output != null) {
                 output.println(unknownFormat + endChar);
             }
             return null;

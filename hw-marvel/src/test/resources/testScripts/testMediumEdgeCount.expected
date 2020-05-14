@@ -1,0 +1,5 @@
+#Tests for the edgeCount of a medium dataset, from mediumSizeSuperheroes.tsv
+#mediumSizeSuperheroes.tsv should be a valid file under the marvel data folder
+
+loaded graph mediumHeroes
+Number of edges in mediumHeroes is: 96
