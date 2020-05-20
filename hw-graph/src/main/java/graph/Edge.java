@@ -4,10 +4,10 @@ package graph;
  * This class represents the concept of an edge in a graph, which may be labelled.
  */
 
-public class Edge {
-    private final Node startNode;
-    private final Node endNode;
-    private final String label;
+public class Edge<T> {
+    private final Node<T> startNode;
+    private final Node<T> endNode;
+    private final T label;
 
     // Abstraction Function:
     //   An Edge e is immutable and contains two non-null nodes, a startNode and endNode,
@@ -18,11 +18,9 @@ public class Edge {
 
     // Representation invariant for every Edge e:
     // (e.startNode != null && e.endNode != null) &&
-    // (e.label == null || e.label.length() > 0)
     // In other words,
     //   * e.startNode and e.endNode are always non-null
-    //   * e.startNode is a different node than e.endNode
-    //   * e.label must be either null or not an empty string
+    //   * e.label is non-null
 
     /**
      * Constructs a new Edge.
@@ -32,7 +30,7 @@ public class Edge {
      * @spec.requires startNode != null and endNode != null
      * @spec.effects Constructs a new Edge = (startNode, endNode, label).
      */
-    public Edge(Node startNode, Node endNode, String label) {
+    public Edge(Node<T> startNode, Node<T> endNode, T label) {
         this.startNode = startNode;
         this.endNode = endNode;
         this.label = label;
@@ -56,10 +54,10 @@ public class Edge {
     }
 
     /**
-     * Returns a String representation of this edge's label.
-     * @return a String of the label associated with this edge
+     * Returns the type representation of this edge's label.
+     * @return the label associated with this edge
      */
-    public String getLabel() {
+    public T getLabel() {
         return label;
     }
 
@@ -70,7 +68,7 @@ public class Edge {
      */
     @Override
     public String toString() {
-        return "e" + label + " from " + startNode.toString() + " to " + endNode.toString();
+        return "e" + label.toString() + " from " + startNode.toString() + " to " + endNode.toString();
     }
 
     /**
@@ -105,6 +103,6 @@ public class Edge {
     private void checkRep() {
         assert (startNode != null) : "startNode cannot be null";
         assert (endNode != null) : "endNode cannot be null";
-        assert (label != null && label.length() != 0) : "label must be null or not an empty string";
+        assert (label != null) : "label cannot be null";
     }
 }

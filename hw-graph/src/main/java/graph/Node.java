@@ -4,17 +4,16 @@ package graph;
  * This class represents the concept of a node in a graph, capable of containing data.
  */
 
-public class Node {
-    private final String data;
+public class Node<T> {
+    private final T data;
 
     // Abstraction Function:
     //   A Node n is immutable and solely associated with the value of its data, which is non-null.
 
     // Representation invariant for every Node n:
-    // n.data != null && n.length() > 0
+    // n.data != null
     // In other words,
     //   * n.data is always non-null
-    //   * n.data is not an empty string
 
     /**
      * Constructs a new Node.
@@ -22,7 +21,7 @@ public class Node {
      * @spec.requires data != null
      * @spec.effects Constructs a new Node = data.
      */
-    public Node(String data) {
+    public Node(T data) {
         this.data = data;
         checkRep();
     }
@@ -34,7 +33,7 @@ public class Node {
      */
     @Override
     public String toString() {
-        return data;
+        return data.toString();
     }
 
     /**

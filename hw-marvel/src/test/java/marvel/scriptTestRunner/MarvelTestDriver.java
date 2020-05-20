@@ -146,7 +146,7 @@ public class MarvelTestDriver {
         DirectedGraph testGraph = graphs.get(graphName);
         nodeName = nodeName.replaceAll("_", " ");
         String outputString = graphName + " does ";
-        if (testGraph.containsNode(new Node(nodeName))) {
+        if (testGraph.containsNode(new Node<String>(nodeName))) {
             outputString += "contain " + nodeName;
         } else { // Does not contain node
             outputString += "not contain " + nodeName;
@@ -225,7 +225,7 @@ public class MarvelTestDriver {
 
     private void addNode(String graphName, String nodeName) {
         DirectedGraph testGraph = graphs.get(graphName);
-        Node newNode = new Node(nodeName);
+        Node<String> newNode = new Node<String>(nodeName);
         testGraph.addNode(newNode);
         output.println("added node " + nodeName + " to " + graphName);
     }
@@ -243,7 +243,7 @@ public class MarvelTestDriver {
 
     private void removeNode(String graphName, String nodeName) {
         DirectedGraph testGraph = graphs.get(graphName);
-        Node oldNode = new Node(nodeName);
+        Node<String> oldNode = new Node<String>(nodeName);
         testGraph.removeNode(oldNode);
         output.println("removed node " + nodeName + " from " + graphName);
     }
@@ -265,9 +265,9 @@ public class MarvelTestDriver {
                          String edgeLabel) {
 
         DirectedGraph testGraph = graphs.get(graphName);
-        Node parentNode = new Node(parentName);
-        Node childNode = new Node(childName);
-        Edge newEdge = new Edge(parentNode, childNode, edgeLabel);
+        Node<String> parentNode = new Node<String>(parentName);
+        Node<String> childNode = new Node<String>(childName);
+        Edge<String> newEdge = new Edge<String>(parentNode, childNode, edgeLabel);
         testGraph.addEdge(newEdge);
         output.println("added edge " + edgeLabel + " from " + parentName + " to " + childName +
                 " in " + graphName);
@@ -290,9 +290,9 @@ public class MarvelTestDriver {
                             String edgeLabel) {
 
         DirectedGraph testGraph = graphs.get(graphName);
-        Node parentNode = new Node(parentName);
-        Node childNode = new Node(childName);
-        Edge oldEdge = new Edge(parentNode, childNode, edgeLabel);
+        Node<String> parentNode = new Node<String>(parentName);
+        Node<String> childNode = new Node<String>(childName);
+        Edge<String> oldEdge = new Edge<String>(parentNode, childNode, edgeLabel);
         testGraph.removeEdge(oldEdge);
         output.println("removed edge " + edgeLabel + " from " + parentName + " to " + childName +
                 " in " + graphName);
@@ -330,7 +330,7 @@ public class MarvelTestDriver {
     private void listChildren(String graphName, String parentName) {
         DirectedGraph testGraph = graphs.get(graphName);
         parentName = parentName.replaceAll("_", " ");
-        Set<Edge> listOfChildren = testGraph.listChildren(new Node(parentName), false);
+        Set<Edge> listOfChildren = testGraph.listChildren(new Node<String>(parentName), false);
         String outputString = "the children of " + parentName + " in " + graphName + " are:";
         for (Edge child : listOfChildren) {
             outputString += " " + child.getEnd().toString() + "(" + child.getLabel() + ")";

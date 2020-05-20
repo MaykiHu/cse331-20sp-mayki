@@ -12,12 +12,12 @@ public final class NodeTest {
     public Timeout globalTimeout = Timeout.seconds(10); // 10 seconds max per method tested
 
     // Some simple base Nodes
-    private Node negTwo = new Node("-2");
-    private Node negOne = new Node("-1");
-    private Node zero = new Node("0");
-    private Node one = new Node("1");
-    private Node two = new Node("2");
-    private Node pointEight = new Node("0.8");
+    private Node<String> negTwo = new Node<>("-2");
+    private Node<String> negOne = new Node<>("-1");
+    private Node<String> zero = new Node<>("0");
+    private Node<String> one = new Node<>("1");
+    private Node<String> two = new Node<>("2");
+    private Node<String> pointEight = new Node<>("0.8");
 
     // Varying nodes with data {"-2", "-1", "0", "1", "2", "0.8"}
     private Node[] nodes = new Node[]{negTwo, negOne, zero, one, two, pointEight};
@@ -41,8 +41,8 @@ public final class NodeTest {
         assertEquals(one, one);
 
         // Check with new node creations of same data
-        assertEquals(pointEight, new Node("0.8"));
-        assertEquals(new Node("2"), new Node("2"));
+        assertEquals(pointEight, new Node<String>("0.8"));
+        assertEquals(new Node<String>("2"), new Node<String>("2"));
 
         // Simple cases for checking false positives
         assertNotEquals(negTwo, negOne);
@@ -62,11 +62,11 @@ public final class NodeTest {
     public void testHashCode() {
         // Same objects
         assertEquals(negOne.hashCode(), negOne.hashCode());
-        assertEquals(negOne.hashCode(), new Node("-1").hashCode());
+        assertEquals(negOne.hashCode(), new Node<String>("-1").hashCode());
 
         // Different objects
         assertNotEquals(zero.hashCode(), two.hashCode());
         assertNotEquals(two.hashCode(), negTwo.hashCode());
-        assertNotEquals(pointEight.hashCode(), new Node("8").hashCode());
+        assertNotEquals(pointEight.hashCode(), new Node<String>("8").hashCode());
     }
 }

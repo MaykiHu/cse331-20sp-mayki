@@ -16,16 +16,16 @@ public class DirectedGraphTest {
     public Timeout globalTimeout = Timeout.seconds(10); // 10 seconds max per method tested
 
     // Some simple base Edges and Nodes
-    private Node negOne = new Node("-1");
-    private Node zero = new Node("0");
-    private Node one = new Node("1");
-    private Node two = new Node("2");
-    private Edge neg_one_1 = new Edge(negOne, one, "1");
-    private Edge neg_one_0 = new Edge(negOne, one, "0");
-    private Edge neg_zero_1 = new Edge(negOne, zero, "1");
-    private Edge neg_zero_0 = new Edge(negOne, zero, "0");
-    private Edge zero_neg_0 = new Edge(zero, negOne, "0");
-    private Edge zero_neg_1 = new Edge(zero, negOne, "1");
+    private Node<String> negOne = new Node<String>("-1");
+    private Node<String> zero = new Node<String>("0");
+    private Node<String> one = new Node<String>("1");
+    private Node<String> two = new Node<String>("2");
+    private Edge<String> neg_one_1 = new Edge<String>(negOne, one, "1");
+    private Edge<String> neg_one_0 = new Edge<String>(negOne, one, "0");
+    private Edge<String> neg_zero_1 = new Edge<String>(negOne, zero, "1");
+    private Edge<String> neg_zero_0 = new Edge<String>(negOne, zero, "0");
+    private Edge<String> zero_neg_0 = new Edge<String>(zero, negOne, "0");
+    private Edge<String> zero_neg_1 = new Edge<String>(zero, negOne, "1");
 
     // Varying nodes with data {}
     private  Node[] nodes = new Node[] {negOne, zero, one};
@@ -70,7 +70,7 @@ public class DirectedGraphTest {
      */
     @Test
     public void testAddEdgeOnlyStartNode() {
-        Edge hasStart = new Edge(zero, two, "1"); // only has starting node
+        Edge<String> hasStart = new Edge<String>(zero, two, "1"); // only has starting node
         String beforeGraph = directedGraph.toString();
 
         directedGraph.addEdge(hasStart);
@@ -83,7 +83,7 @@ public class DirectedGraphTest {
      */
     @Test
     public void testAddEdgeOnlyEndNode() {
-        Edge hasEnd = new Edge(two, zero, "0"); // only has ending node
+        Edge<String> hasEnd = new Edge<String>(two, zero, "0"); // only has ending node
         String beforeGraph = directedGraph.toString();
 
         directedGraph.addEdge(hasEnd);
@@ -96,7 +96,7 @@ public class DirectedGraphTest {
      */
     @Test
     public void testAddNonExistentEdge() {
-        Edge noEdge = new Edge(two, two, "0"); // only has ending node
+        Edge<String> noEdge = new Edge<String>(two, two, "0"); // only has ending node
         String beforeGraph = directedGraph.toString();
 
         directedGraph.addEdge(noEdge);
@@ -117,7 +117,7 @@ public class DirectedGraphTest {
      */
     @Test
     public void testRemoveEdgeOnlyStartNode() {
-        Edge hasStart = new Edge(zero, two, "1"); // only has starting node
+        Edge<String> hasStart = new Edge<String>(zero, two, "1"); // only has starting node
         String beforeGraph = directedGraph.toString();
 
         directedGraph.removeEdge(hasStart);
@@ -130,7 +130,7 @@ public class DirectedGraphTest {
      */
     @Test
     public void testRemoveEdgeOnlyEndNode() {
-        Edge hasEnd = new Edge(two, zero, "0"); // only has ending node
+        Edge<String> hasEnd = new Edge<String>(two, zero, "0"); // only has ending node
         String beforeGraph = directedGraph.toString();
 
         directedGraph.removeEdge(hasEnd);
@@ -143,7 +143,7 @@ public class DirectedGraphTest {
      */
     @Test
     public void testRemovingNonExistentEdge() {
-        Edge noEdge = new Edge(two, two, "0"); // only has ending node
+        Edge<String> noEdge = new Edge<String>(two, two, "0"); // only has ending node
         String beforeGraph = directedGraph.toString();
 
         directedGraph.addEdge(noEdge);

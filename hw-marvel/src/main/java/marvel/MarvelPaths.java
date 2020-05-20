@@ -119,14 +119,14 @@ public class MarvelPaths {
             Set<String> commonHeroesList = titleEntry.getValue();
             Iterator<String> commonHeroesItr = commonHeroesList.iterator();
             while (commonHeroesItr.hasNext()) {
-                Node startHero = new Node(commonHeroesItr.next());
+                Node<String> startHero = new Node<String>(commonHeroesItr.next());
                 universe.addNode(startHero);
                 for (String commonHero : commonHeroesList) { // For every hero in common with title
                     String label = titleEntry.getKey(); // Label of edge is title of comic
-                    Node endHero = new Node(commonHero);
+                    Node<String> endHero = new Node<String>(commonHero);
                     universe.addNode(endHero);
-                    Edge toEdge = new Edge(startHero, endHero, label);
-                    Edge fromEdge = new Edge(endHero, startHero, label);
+                    Edge<String> toEdge = new Edge<String>(startHero, endHero, label);
+                    Edge<String> fromEdge = new Edge<String>(endHero, startHero, label);
                     universe.addEdge(toEdge);
                     universe.addEdge(fromEdge);
                 }
@@ -167,8 +167,8 @@ public class MarvelPaths {
      */
     public static List<Edge> findPath(DirectedGraph universe, String startChar,
                                       String endChar, PrintWriter output) {
-        Node start = new Node(startChar);
-        Node dest = new Node(endChar);
+        Node<String> start = new Node<String>(startChar);
+        Node<String> dest = new Node<String>(endChar);
         // Case(s) where characters aren't in the graph
         if (!universe.containsNode(start) || !universe.containsNode(dest)) {
             String unknownFormat = "unknown character ";
@@ -197,7 +197,7 @@ public class MarvelPaths {
                 for (Edge edge : destPath) { // Print path for client
                     String currChar = edge.getStart().toString();
                     String nextChar = edge.getEnd().toString();
-                    String book = edge.getLabel();
+                    String book = edge.getLabel().toString();
                     if (output != null)
                         output.println(currChar + " to " + nextChar + " via " + book);
                 }
