@@ -8,20 +8,20 @@ import java.util.Set;
  * and have a certain size.
  */
 
-public interface Graph {
+public interface Graph<NodeType, EdgeType> {
     /**
      * Adds a node to the graph.
      * @param node the node to be added to the graph.
      * @spec.effects adds the node to the graph
      */
-    void addNode(Node node);
+    void addNode(Node<NodeType> node);
 
     /**
      * Adds the edge to the graph.
      * @param edge the edge to be added to the graph.
      * @spec.effects adds the edge to the graph.
      */
-    void addEdge(Edge edge);
+    void addEdge(Edge<NodeType, EdgeType> edge);
 
     /**
      * Removes the node from the graph.
@@ -29,7 +29,7 @@ public interface Graph {
      * @spec.effects removes the node from the graph.
      * @return the node that was removed
      */
-    Node removeNode(Node node);
+    Node<NodeType> removeNode(Node<NodeType> node);
 
     /**
      * Removes the edge from this graph.
@@ -37,13 +37,13 @@ public interface Graph {
      * @spec.effects removes the edge from the graph
      * @return the edge that was removed
      */
-    Edge removeEdge(Edge edge);
+    Edge<NodeType, EdgeType> removeEdge(Edge<NodeType, EdgeType> edge);
 
     /**
      * Returns the set of all nodes in this graph.
      * @return a set; the set of all nodes in this graph
      */
-    Set<Node> listNodes();
+    Set<Node<NodeType>> listNodes();
 
     /**
      * Returns the set of all edges to children of this parent node
@@ -51,7 +51,7 @@ public interface Graph {
      * @param includeSelf boolean to include parent as a child, true if considering reflexive edges
      * @return a set; the set of edges associated with this parent node
      */
-    Set<Edge> listChildren(Node parentNode, boolean includeSelf);
+    Set<Edge<NodeType, EdgeType>> listChildren(Node<NodeType> parentNode, boolean includeSelf);
 
     /**
      * Returns the size of this graph.
@@ -76,5 +76,5 @@ public interface Graph {
      * @param node the node in question of being in graph
      * @return a boolean, true if graph contains node.  False otherwise.
      */
-    boolean containsNode(Node node);
+    boolean containsNode(Node<NodeType> node);
 }

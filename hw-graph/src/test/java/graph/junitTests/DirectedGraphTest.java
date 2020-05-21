@@ -9,6 +9,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 public class DirectedGraphTest {
@@ -20,26 +23,29 @@ public class DirectedGraphTest {
     private Node<String> zero = new Node<String>("0");
     private Node<String> one = new Node<String>("1");
     private Node<String> two = new Node<String>("2");
-    private Edge<String> neg_one_1 = new Edge<String>(negOne, one, "1");
-    private Edge<String> neg_one_0 = new Edge<String>(negOne, one, "0");
-    private Edge<String> neg_zero_1 = new Edge<String>(negOne, zero, "1");
-    private Edge<String> neg_zero_0 = new Edge<String>(negOne, zero, "0");
-    private Edge<String> zero_neg_0 = new Edge<String>(zero, negOne, "0");
-    private Edge<String> zero_neg_1 = new Edge<String>(zero, negOne, "1");
+    private Edge<String, String> neg_one_1 = new Edge<String, String>(negOne, one, "1");
+    private Edge<String, String> neg_one_0 = new Edge<String, String>(negOne, one, "0");
+    private Edge<String, String> neg_zero_1 = new Edge<>(negOne, zero, "1");
+    private Edge<String, String> neg_zero_0 = new Edge<String, String>(negOne, zero, "0");
+    private Edge<String, String> zero_neg_0 = new Edge<String, String>(zero, negOne, "0");
+    private Edge<String, String> zero_neg_1 = new Edge<String, String>(zero, negOne, "1");
 
     // Varying nodes with data {}
-    private  Node[] nodes = new Node[] {negOne, zero, one};
+    private List<Node<String>> nodeList = new ArrayList<>();
 
     // Graph that has nodes and edges listed above
-    private DirectedGraph directedGraph = new DirectedGraph();
+    private DirectedGraph<String, String> directedGraph = new DirectedGraph<>();
 
     /**
      * Tests and methods will use this set up graph that only has nodes 0, 1, -1
      */
     @Before
     public void populateGraph() {
-        for (int i = 0; i < nodes.length; i++) {
-            directedGraph.addNode(nodes[i]);
+        nodeList.add(negOne);
+        nodeList.add(zero);
+        nodeList.add(one);
+        for (int i = 0; i < nodeList.size(); i++) {
+            directedGraph.addNode(nodeList.get(i));
         }
     }
 
@@ -70,7 +76,7 @@ public class DirectedGraphTest {
      */
     @Test
     public void testAddEdgeOnlyStartNode() {
-        Edge<String> hasStart = new Edge<String>(zero, two, "1"); // only has starting node
+        Edge<String, String> hasStart = new Edge<String, String>(zero, two, "1"); // only has starting node
         String beforeGraph = directedGraph.toString();
 
         directedGraph.addEdge(hasStart);
@@ -83,7 +89,7 @@ public class DirectedGraphTest {
      */
     @Test
     public void testAddEdgeOnlyEndNode() {
-        Edge<String> hasEnd = new Edge<String>(two, zero, "0"); // only has ending node
+        Edge<String, String> hasEnd = new Edge<String, String>(two, zero, "0"); // only has ending node
         String beforeGraph = directedGraph.toString();
 
         directedGraph.addEdge(hasEnd);
@@ -96,7 +102,7 @@ public class DirectedGraphTest {
      */
     @Test
     public void testAddNonExistentEdge() {
-        Edge<String> noEdge = new Edge<String>(two, two, "0"); // only has ending node
+        Edge<String, String> noEdge = new Edge<String, String>(two, two, "0"); // only has ending node
         String beforeGraph = directedGraph.toString();
 
         directedGraph.addEdge(noEdge);
@@ -117,7 +123,7 @@ public class DirectedGraphTest {
      */
     @Test
     public void testRemoveEdgeOnlyStartNode() {
-        Edge<String> hasStart = new Edge<String>(zero, two, "1"); // only has starting node
+        Edge<String, String> hasStart = new Edge<String, String>(zero, two, "1"); // only has starting node
         String beforeGraph = directedGraph.toString();
 
         directedGraph.removeEdge(hasStart);
@@ -130,7 +136,7 @@ public class DirectedGraphTest {
      */
     @Test
     public void testRemoveEdgeOnlyEndNode() {
-        Edge<String> hasEnd = new Edge<String>(two, zero, "0"); // only has ending node
+        Edge<String, String> hasEnd = new Edge<String, String>(two, zero, "0"); // only has ending node
         String beforeGraph = directedGraph.toString();
 
         directedGraph.removeEdge(hasEnd);
@@ -143,7 +149,7 @@ public class DirectedGraphTest {
      */
     @Test
     public void testRemovingNonExistentEdge() {
-        Edge<String> noEdge = new Edge<String>(two, two, "0"); // only has ending node
+        Edge<String, String> noEdge = new Edge<String, String>(two, two, "0"); // only has ending node
         String beforeGraph = directedGraph.toString();
 
         directedGraph.addEdge(noEdge);

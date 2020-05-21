@@ -17,12 +17,12 @@ public class EdgeTest {
     private Node<String> negOne = new Node<String>("-1");
     private Node<String> zero = new Node<String>("0");
     private Node<String> one = new Node<String>("1");
-    private Edge<String> neg_one_1 = new Edge<String>(negOne, one, "1");
-    private Edge<String> neg_one_0 = new Edge<String>(negOne, one, "0");
-    private Edge<String> neg_zero_1 = new Edge<String>(negOne, zero, "1");
-    private Edge<String> neg_zero_0 = new Edge<String>(negOne, zero, "0");
-    private Edge<String> zero_neg_0 = new Edge<String>(zero, negOne, "0");
-    private Edge<String> zero_neg_1 = new Edge<String>(zero, negOne, "1");
+    private Edge<String, String> neg_one_1 = new Edge<String, String>(negOne, one, "1");
+    private Edge<String, String> neg_one_0 = new Edge<String, String>(negOne, one, "0");
+    private Edge<String, String> neg_zero_1 = new Edge<String, String>(negOne, zero, "1");
+    private Edge<String, String> neg_zero_0 = new Edge<String, String>(negOne, zero, "0");
+    private Edge<String, String> zero_neg_0 = new Edge<String, String>(zero, negOne, "0");
+    private Edge<String, String> zero_neg_1 = new Edge<String, String>(zero, negOne, "1");
 
     // Varying edges with data {}
     private Edge[] edges = new Edge[]
@@ -47,8 +47,8 @@ public class EdgeTest {
         assertEquals(zero_neg_0, zero_neg_0);
 
         // Check with new node creations of same data
-        assertEquals(neg_zero_1, new Edge<String>(negOne, zero, "1"));
-        assertEquals(new Edge<String>(zero, negOne, "1"), new Edge<String>(zero, negOne, "1"));
+        assertEquals(neg_zero_1, new Edge<String, String>(negOne, zero, "1"));
+        assertEquals(new Edge<String, String>(zero, negOne, "1"), new Edge<String, String>(zero, negOne, "1"));
 
         // Simple cases for checking false positives
         assertNotEquals(neg_zero_1, zero_neg_1);
@@ -97,7 +97,7 @@ public class EdgeTest {
     public void testHashCode() {
         // Same objects
         assertEquals(zero_neg_0.hashCode(), zero_neg_0.hashCode());
-        assertEquals(neg_one_0.hashCode(), new Edge<String>(negOne, one, "0").hashCode());
+        assertEquals(neg_one_0.hashCode(), new Edge<String, String>(negOne, one, "0").hashCode());
 
         // Different objects
         assertNotEquals(zero_neg_1.hashCode(), zero_neg_0.hashCode()); // different label

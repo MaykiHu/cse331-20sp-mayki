@@ -50,7 +50,7 @@ public class MarvelPaths {
      * @param userInput where the user responds through
      */
     private static void interact(PrintWriter output, Scanner userInput) {
-        DirectedGraph marvelUniverse = setupUniverse(fileName);
+        DirectedGraph<String, String> marvelUniverse = setupUniverse(fileName);
         // Obtain user input
         output.println("Who's the first character leading the path?");
         String startChar = userInput.nextLine();
@@ -107,8 +107,8 @@ public class MarvelPaths {
      *  @spec.requires fileName is a valid file within Marvel's data folder
      *  @return a DirectedGraph; a graph of the marvel universe specified from the file
      */
-    public static DirectedGraph setupUniverse(String fileName) {
-        DirectedGraph universe = new DirectedGraph();
+    public static DirectedGraph<String, String> setupUniverse(String fileName) {
+        DirectedGraph<String, String> universe = new DirectedGraph<>();
         // data is in the form: comic books and heroes associated
         Map<String, Set<String>> data = MarvelParser.parseData(fileName);
         // Titles of comics and heroes associated with them
@@ -125,8 +125,8 @@ public class MarvelPaths {
                     String label = titleEntry.getKey(); // Label of edge is title of comic
                     Node<String> endHero = new Node<String>(commonHero);
                     universe.addNode(endHero);
-                    Edge<String> toEdge = new Edge<String>(startHero, endHero, label);
-                    Edge<String> fromEdge = new Edge<String>(endHero, startHero, label);
+                    Edge<String, String> toEdge = new Edge<String, String>(startHero, endHero, label);
+                    Edge<String, String> fromEdge = new Edge<String, String>(endHero, startHero, label);
                     universe.addEdge(toEdge);
                     universe.addEdge(fromEdge);
                 }
@@ -165,7 +165,7 @@ public class MarvelPaths {
      *  @spec.requires startChar, endChar, and output are not null, output is valid destination
      *  @spec.requires if using PrintWriter of System.out, remember to enter true to flush
      */
-    public static List<Edge> findPath(DirectedGraph universe, String startChar,
+    public static List<Edge<String, String>> findPath(DirectedGraph<String, String> universe, String startChar,
                                       String endChar, PrintWriter output) {
         Node<String> start = new Node<String>(startChar);
         Node<String> dest = new Node<String>(endChar);
@@ -182,8 +182,8 @@ public class MarvelPaths {
         }
 
         String pathFormat = "path from " + startChar + " to " + endChar + ":";
-        Queue<Node> nodesToVisit = new LinkedList<>();
-        Map<Node, List<Edge>> nodePaths = new HashMap<>();
+        Queue<Node<String>> nodesToVisit = new LinkedList<>();
+        Map<Node<String>, List<Edge<String, String>>> nodePaths = new HashMap<>();
         nodesToVisit.add(start);
         nodePaths.put(start, new ArrayList<>());
         if (output != null)
@@ -191,10 +191,10 @@ public class MarvelPaths {
 
         // Start/Keep searching through applicable nodes
         while (!nodesToVisit.isEmpty()) { // Nodes still to be checked
-            Node currNode = nodesToVisit.remove();
+            Node<String> currNode = nodesToVisit.remove();
             if (currNode.equals(dest)) { // Reached destination node
-                List<Edge> destPath = nodePaths.get(currNode);
-                for (Edge edge : destPath) { // Print path for client
+                List<Edge<String, String>> destPath = nodePaths.get(currNode);
+                for (Edge<String, String> edge : destPath) { // Print path for client
                     String currChar = edge.getStart().toString();
                     String nextChar = edge.getEnd().toString();
                     String book = edge.getLabel().toString();
@@ -203,12 +203,12 @@ public class MarvelPaths {
                 }
                 return destPath;
             } // Continue searching through edges of this node
-            Set<Edge> sortedEdges = universe.listChildren(currNode, false); // no reflexive
-            for (Edge currEdge : sortedEdges) {
-                Node nextNode = currEdge.getEnd();
+            Set<Edge<String, String>> sortedEdges = universe.listChildren(currNode, false); // no reflexive
+            for (Edge<String, String> currEdge : sortedEdges) {
+                Node<String> nextNode = currEdge.getEnd();
                 if (!nodePaths.containsKey(nextNode)) { // nextNode has not been visited
-                    List<Edge> currPath = nodePaths.get(currNode);
-                    List<Edge> nextPath = new ArrayList<>(currPath);
+                    List<Edge<String, String>> currPath = nodePaths.get(currNode);
+                    List<Edge<String, String>> nextPath = new ArrayList<>(currPath);
                     nextPath.add(currEdge); // nextPath to include current path and current edge
                     nodePaths.put(nextNode, nextPath); // Update path to include next node
                     nodesToVisit.add(nextNode); // Add a new node for searching

@@ -4,10 +4,10 @@ package graph;
  * This class represents the concept of an edge in a graph, which may be labelled.
  */
 
-public class Edge<T> {
-    private final Node<T> startNode;
-    private final Node<T> endNode;
-    private final T label;
+public class Edge<NodeType, EdgeType> {
+    private final Node<NodeType> startNode;
+    private final Node<NodeType> endNode;
+    private final EdgeType label;
 
     // Abstraction Function:
     //   An Edge e is immutable and contains two non-null nodes, a startNode and endNode,
@@ -30,7 +30,7 @@ public class Edge<T> {
      * @spec.requires startNode != null and endNode != null
      * @spec.effects Constructs a new Edge = (startNode, endNode, label).
      */
-    public Edge(Node<T> startNode, Node<T> endNode, T label) {
+    public Edge(Node<NodeType> startNode, Node<NodeType> endNode, EdgeType label) {
         this.startNode = startNode;
         this.endNode = endNode;
         this.label = label;
@@ -41,7 +41,7 @@ public class Edge<T> {
      * Returns the starting node of this edge.
      * @return a Node, that is the starting node of this edge
      */
-    public Node getStart() {
+    public Node<NodeType> getStart() {
         return startNode; // Since Node is immutable, returning the node is fine
     }
 
@@ -49,7 +49,7 @@ public class Edge<T> {
      * Returns the ending node of this edge.
      * @return a Node, that is the ending node of the edge
      */
-    public Node getEnd() {
+    public Node<NodeType> getEnd() {
         return endNode; // Since Node is immutable, returning the node is fine
     }
 
@@ -57,7 +57,7 @@ public class Edge<T> {
      * Returns the type representation of this edge's label.
      * @return the label associated with this edge
      */
-    public T getLabel() {
+    public EdgeType getLabel() {
         return label;
     }
 
@@ -90,10 +90,13 @@ public class Edge<T> {
      */
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Edge)) {
-            return false; // Not an Edge
-        } // Otherwise, check if edges are equal
-        Edge e = (Edge) obj;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Edge<?, ?> e = (Edge<?, ?>) obj;
         return startNode.equals(e.startNode) && endNode.equals(e.endNode) && label.equals(e.label);
     }
 

@@ -4,8 +4,8 @@ package graph;
  * This class represents the concept of a node in a graph, capable of containing data.
  */
 
-public class Node<T> {
-    private final T data;
+public class Node<NodeType> {
+    private final NodeType data;
 
     // Abstraction Function:
     //   A Node n is immutable and solely associated with the value of its data, which is non-null.
@@ -21,7 +21,7 @@ public class Node<T> {
      * @spec.requires data != null
      * @spec.effects Constructs a new Node = data.
      */
-    public Node(T data) {
+    public Node(NodeType data) {
         this.data = data;
         checkRep();
     }
@@ -55,10 +55,13 @@ public class Node<T> {
      */
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Node)) {
-            return false; // Not a Node
-        } // Otherwise, check if nodes equal
-        Node n = (Node) obj;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Node<?> n = (Node<?>) obj;
         return data.equals(n.data);
     }
 

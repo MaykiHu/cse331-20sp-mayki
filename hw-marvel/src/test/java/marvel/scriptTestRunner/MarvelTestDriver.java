@@ -32,7 +32,7 @@ public class MarvelTestDriver {
     /**
      * String -> Graph: maps the names of graphs to the actual graph
      **/
-    private final Map<String, DirectedGraph> graphs = new HashMap<>();
+    private final Map<String, DirectedGraph<String, String>> graphs = new HashMap<>();
     private final PrintWriter output;
     private final BufferedReader input;
 
@@ -143,7 +143,7 @@ public class MarvelTestDriver {
     }
 
     private void containsNode(String graphName, String nodeName) {
-        DirectedGraph testGraph = graphs.get(graphName);
+        DirectedGraph<String, String> testGraph = graphs.get(graphName);
         nodeName = nodeName.replaceAll("_", " ");
         String outputString = graphName + " does ";
         if (testGraph.containsNode(new Node<String>(nodeName))) {
@@ -163,7 +163,7 @@ public class MarvelTestDriver {
     }
 
     private void getEdgeCount(String graphName) {
-        DirectedGraph testGraph = graphs.get(graphName);
+        DirectedGraph<String, String> testGraph = graphs.get(graphName);
         output.println("Number of edges in " + graphName + " is: " + testGraph.getEdgeCount());
     }
 
@@ -178,7 +178,7 @@ public class MarvelTestDriver {
     }
 
     private void findPath(String graphName, String startChar, String endChar) {
-        DirectedGraph testGraph = graphs.get(graphName);
+        DirectedGraph<String, String> testGraph = graphs.get(graphName);
         startChar = startChar.replaceAll("_", " ");
         endChar = endChar.replaceAll("_", " ");
         MarvelPaths.findPath(testGraph, startChar, endChar, output);
@@ -208,7 +208,7 @@ public class MarvelTestDriver {
     }
 
     private void createGraph(String graphName) {
-        graphs.put(graphName, new DirectedGraph());
+        graphs.put(graphName, new DirectedGraph<String, String>());
         output.println("created graph " + graphName);
     }
 
@@ -224,7 +224,7 @@ public class MarvelTestDriver {
     }
 
     private void addNode(String graphName, String nodeName) {
-        DirectedGraph testGraph = graphs.get(graphName);
+        DirectedGraph<String, String> testGraph = graphs.get(graphName);
         Node<String> newNode = new Node<String>(nodeName);
         testGraph.addNode(newNode);
         output.println("added node " + nodeName + " to " + graphName);
@@ -242,7 +242,7 @@ public class MarvelTestDriver {
     }
 
     private void removeNode(String graphName, String nodeName) {
-        DirectedGraph testGraph = graphs.get(graphName);
+        DirectedGraph<String, String> testGraph = graphs.get(graphName);
         Node<String> oldNode = new Node<String>(nodeName);
         testGraph.removeNode(oldNode);
         output.println("removed node " + nodeName + " from " + graphName);
@@ -264,10 +264,10 @@ public class MarvelTestDriver {
     private void addEdge(String graphName, String parentName, String childName,
                          String edgeLabel) {
 
-        DirectedGraph testGraph = graphs.get(graphName);
+        DirectedGraph<String, String> testGraph = graphs.get(graphName);
         Node<String> parentNode = new Node<String>(parentName);
         Node<String> childNode = new Node<String>(childName);
-        Edge<String> newEdge = new Edge<String>(parentNode, childNode, edgeLabel);
+        Edge<String, String> newEdge = new Edge<String, String>(parentNode, childNode, edgeLabel);
         testGraph.addEdge(newEdge);
         output.println("added edge " + edgeLabel + " from " + parentName + " to " + childName +
                 " in " + graphName);
@@ -289,10 +289,10 @@ public class MarvelTestDriver {
     private void removeEdge(String graphName, String parentName, String childName,
                             String edgeLabel) {
 
-        DirectedGraph testGraph = graphs.get(graphName);
+        DirectedGraph<String, String> testGraph = graphs.get(graphName);
         Node<String> parentNode = new Node<String>(parentName);
         Node<String> childNode = new Node<String>(childName);
-        Edge<String> oldEdge = new Edge<String>(parentNode, childNode, edgeLabel);
+        Edge<String, String> oldEdge = new Edge<String, String>(parentNode, childNode, edgeLabel);
         testGraph.removeEdge(oldEdge);
         output.println("removed edge " + edgeLabel + " from " + parentName + " to " + childName +
                 " in " + graphName);
@@ -308,8 +308,8 @@ public class MarvelTestDriver {
     }
 
     private void listNodes(String graphName) {
-        DirectedGraph testGraph = graphs.get(graphName);
-        Set<Node> listOfNodes = testGraph.listNodes();
+        DirectedGraph<String, String> testGraph = graphs.get(graphName);
+        Set<Node<String>> listOfNodes = testGraph.listNodes();
         String outputString = graphName + " contains:";
         for (Node node : listOfNodes) {
             outputString += " " + node.toString();
@@ -328,9 +328,9 @@ public class MarvelTestDriver {
     }
 
     private void listChildren(String graphName, String parentName) {
-        DirectedGraph testGraph = graphs.get(graphName);
+        DirectedGraph<String, String> testGraph = graphs.get(graphName);
         parentName = parentName.replaceAll("_", " ");
-        Set<Edge> listOfChildren = testGraph.listChildren(new Node<String>(parentName), false);
+        Set<Edge<String, String>> listOfChildren = testGraph.listChildren(new Node<String>(parentName), false);
         String outputString = "the children of " + parentName + " in " + graphName + " are:";
         for (Edge child : listOfChildren) {
             outputString += " " + child.getEnd().toString() + "(" + child.getLabel() + ")";
@@ -348,7 +348,7 @@ public class MarvelTestDriver {
     }
 
     private void isEmpty(String graphName) {
-        DirectedGraph testGraph = graphs.get(graphName);
+        DirectedGraph<String, String> testGraph = graphs.get(graphName);
         String emptyStatus = " is not empty";
         if (testGraph.isEmpty()) {
             emptyStatus = " is empty";
@@ -366,7 +366,7 @@ public class MarvelTestDriver {
     }
 
     private void getSize(String graphName) {
-        DirectedGraph testGraph = graphs.get(graphName);
+        DirectedGraph<String, String> testGraph = graphs.get(graphName);
         output.println("size of " + graphName + " is " + testGraph.size());
     }
 
@@ -380,7 +380,7 @@ public class MarvelTestDriver {
     }
 
     private void toString(String graphName) {
-        DirectedGraph testGraph = graphs.get(graphName);
+        DirectedGraph<String, String> testGraph = graphs.get(graphName);
         output.println(testGraph.toString());
     }
 

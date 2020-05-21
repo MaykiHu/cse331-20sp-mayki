@@ -7,9 +7,9 @@ import java.util.*;
  * In this directed graph, no same startNode to endNode edge will have the same label.
  */
 
-public class DirectedGraph implements Graph {
+public class DirectedGraph<NodeType, EdgeType> implements Graph<NodeType, EdgeType> {
 
-    private final Map<Node, Set<Edge>> graph;
+    private final Map<Node<NodeType>, Set<Edge<NodeType, EdgeType>>> graph;
 
     // Abstraction Function:
     //   A DirectedGraph g represents a directed graph which have nodes and each node
@@ -44,8 +44,8 @@ public class DirectedGraph implements Graph {
      * @spec.effects Constructs a new DirectedGraph.
      */
     public DirectedGraph() {
-         graph = new HashMap<>();
-         edgeSize = 0;
+        graph = new HashMap<>();
+        edgeSize = 0;
     }
 
     /**
@@ -55,7 +55,7 @@ public class DirectedGraph implements Graph {
      * @spec.effects Adds a node to the graph, if not in the graph.  Otherwise, does not add.
      */
     @Override
-    public void addNode(Node node) {
+    public void addNode(Node<NodeType> node) {
         if (!graph.containsKey(node)) { // If node not in graph
             graph.put(node, new HashSet<>());
         }
@@ -71,9 +71,9 @@ public class DirectedGraph implements Graph {
      * startNode to endNode on the graph.
      */
     @Override
-    public void addEdge(Edge edge) {
-        Node startNode = edge.getStart();
-        Node endNode = edge.getEnd();
+    public void addEdge(Edge<NodeType, EdgeType> edge) {
+        Node<NodeType> startNode = edge.getStart();
+        Node<NodeType> endNode = edge.getEnd();
         // If edge has valid arguments to be added
         if (graph.containsKey(startNode) && graph.containsKey(endNode)) {
             if (!graph.get(startNode).contains(edge)) { // And edge not in graph already
@@ -96,16 +96,16 @@ public class DirectedGraph implements Graph {
      * @return the node that was removed
      */
     @Override
-    public Node removeNode(Node node) {
+    public Node<NodeType> removeNode(Node<NodeType> node) {
         if (node != null && graph.containsKey(node)) { // graph has this node
             edgeSize -= graph.get(node).size();
             graph.remove(node); // Removes this node and all its outgoing edges
-            Iterator<Map.Entry<Node, Set<Edge>>> itr = graph.entrySet().iterator();
-            while (itr.hasNext()) { // Traverses all remaining nodes
-                Map.Entry<Node, Set<Edge>> entry = itr.next();
-                Iterator<Edge> eItr = entry.getValue().iterator();
+            Iterator<Map.Entry<Node<NodeType>, Set<Edge<NodeType, EdgeType>>>> itr = graph.entrySet().iterator();
+            while (itr.hasNext()) { // Traverses all remaining Node<NodeType>s
+                Map.Entry<Node<NodeType>, Set<Edge<NodeType, EdgeType>>> entry = itr.next();
+                Iterator<Edge<NodeType, EdgeType>> eItr = entry.getValue().iterator();
                 while (eItr.hasNext()) { // Traverses outgoing edges of remaining node
-                    Edge edge = eItr.next();
+                    Edge<NodeType, EdgeType> edge = eItr.next();
                     if (edge.getEnd().equals(node)) { // If outgoing edge is to this removed node
                         removeEdge(edge); // Removes this outgoing edge leading to removed node
                         if (!edge.getStart().equals(edge.getEnd())) {
@@ -130,8 +130,8 @@ public class DirectedGraph implements Graph {
      * @return the edge that was removed
      */
     @Override
-    public Edge removeEdge(Edge edge) {
-        Node startNode = edge.getStart();
+    public Edge<NodeType, EdgeType> removeEdge(Edge<NodeType, EdgeType> edge) {
+        Node<NodeType> startNode = edge.getStart();
         if (graph.containsKey(startNode)) { // If edge has startNode in graph
             if (graph.get(startNode).contains(edge)) { // If edge is in graph
                 graph.get(startNode).remove(edge); // Remove edge requested for removal
@@ -150,8 +150,8 @@ public class DirectedGraph implements Graph {
      * @return an unmodifiable set of nodes of this graph
      */
     @Override
-    public Set<Node> listNodes() {
-        Map<Node, Set<Edge>> sortedGraph = new TreeMap<>(new NodeComp());
+    public Set<Node<NodeType>> listNodes() {
+        Map<Node<NodeType>, Set<Edge<NodeType, EdgeType>>> sortedGraph = new TreeMap<>(new NodeComp());
         sortedGraph.putAll(graph);
         return Collections.unmodifiableSet(sortedGraph.keySet());
     }
@@ -165,9 +165,9 @@ public class DirectedGraph implements Graph {
      * @return an unmodifiable set of edges in this graph, of this parent node
      */
     @Override
-    public Set<Edge> listChildren(Node parentNode, boolean includeSelf) {
-        Set<Edge> sortedEdges = new TreeSet<>(new EdgeComp());
-        for (Edge child : graph.get(parentNode)) {
+    public Set<Edge<NodeType, EdgeType>> listChildren(Node<NodeType> parentNode, boolean includeSelf) {
+        Set<Edge<NodeType, EdgeType>> sortedEdges = new TreeSet<>(new EdgeComp());
+        for (Edge<NodeType, EdgeType> child : graph.get(parentNode)) {
             if (!child.getEnd().equals(parentNode) || includeSelf) { // considering reflexive
                 sortedEdges.add(child);
             }
@@ -190,11 +190,11 @@ public class DirectedGraph implements Graph {
     @Override
     public String toString() {
         String graphString = "graph contains:";
-        Set<Node> sortedNodes = listNodes();
-        List<Node> parentNodes = new ArrayList<>();
-        List<Set<Edge>> sortedChildren = new ArrayList<>();
+        Set<Node<NodeType>> sortedNodes = listNodes();
+        List<Node<NodeType>> parentNodes = new ArrayList<>();
+        List<Set<Edge<NodeType, EdgeType>>> sortedChildren = new ArrayList<>();
         // Saves all parent nodes in graph
-        for (Node node : sortedNodes) {
+        for (Node<NodeType> node : sortedNodes) {
             graphString += " " + node.toString();
             parentNodes.add(node);
             sortedChildren.add(listChildren(node, true));
@@ -202,9 +202,9 @@ public class DirectedGraph implements Graph {
         graphString += "\n";
         int parentIndex = 0;
         // Then, saves all children of those parent nodes
-        for (Set<Edge> childrenSet : sortedChildren) {
+        for (Set<Edge<NodeType, EdgeType>> childrenSet : sortedChildren) {
             graphString += "the children of " + parentNodes.get(parentIndex) + " are:";
-            for (Edge child : childrenSet) {
+            for (Edge<NodeType, EdgeType> child : childrenSet) {
                 graphString += " " + child.getEnd().toString() + "(" + child.getLabel() + ")";
             }
             graphString += "\n";
@@ -218,7 +218,7 @@ public class DirectedGraph implements Graph {
      * @param node the node in question
      * @return a boolean, true if node is in the graph.  False otherwise.
      */
-    public boolean containsNode(Node node) {
+    public boolean containsNode(Node<NodeType> node) {
         return graph.containsKey(node);
     }
 
@@ -254,13 +254,13 @@ public class DirectedGraph implements Graph {
     private void checkRep() {
         assert (graph != null); // graph cannot be null
         if (needsCheckRep) { // Only check expensive checks if needed
-            Iterator<Map.Entry<Node, Set<Edge>>> itr = graph.entrySet().iterator();
+            Iterator<Map.Entry<Node<NodeType>, Set<Edge<NodeType, EdgeType>>>> itr = graph.entrySet().iterator();
             while (itr.hasNext()) {
-                Map.Entry<Node, Set<Edge>> entry = itr.next();
+                Map.Entry<Node<NodeType>, Set<Edge<NodeType, EdgeType>>> entry = itr.next();
                 assert (entry.getKey() != null) : "Graph cannot have a null node";
-                Iterator<Edge> eItr = entry.getValue().iterator();
+                Iterator<Edge<NodeType, EdgeType>> eItr = entry.getValue().iterator();
                 while (eItr.hasNext()) {
-                    Edge e = eItr.next();
+                    Edge<NodeType, EdgeType> e = eItr.next();
                     assert (e != null) : "Graph cannot have a null edge";
                 }
             }
@@ -270,8 +270,8 @@ public class DirectedGraph implements Graph {
     /*
         Computes how to compare between two nodes
      */
-    private class NodeComp implements Comparator<Node> {
-        public int compare(Node node1, Node node2) {
+    private class NodeComp implements Comparator<Node<NodeType>> {
+        public int compare(Node<NodeType> node1, Node<NodeType> node2) {
             // Since toString() represents each node distinctly, we can compare via toString()
             return node1.toString().compareTo(node2.toString());
         }
@@ -280,8 +280,8 @@ public class DirectedGraph implements Graph {
     /*
         Computes how to compare between two edges
      */
-    private class EdgeComp implements Comparator<Edge> {
-        public int compare(Edge edge1, Edge edge2) {
+    private class EdgeComp implements Comparator<Edge<NodeType, EdgeType>> {
+        public int compare(Edge<NodeType, EdgeType> edge1, Edge<NodeType, EdgeType> edge2) {
             // Since toString() represents each edge/node distinctly, we can compare via toString()
             // We have to rearrange the toString() such that it evaluates
             // startNode -> endNode -> label
