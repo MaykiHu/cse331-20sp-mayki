@@ -13,6 +13,7 @@ package pathfinder.textInterface;
 
 import graph.Node;
 import pathfinder.datastructures.Path;
+import pathfinder.datastructures.Point;
 import pathfinder.parser.CampusBuilding;
 
 import java.io.BufferedReader;
@@ -139,11 +140,11 @@ public class TextInterfaceView {
      * @param end   The long name of the building at the end of the path.
      * @param path  The path to show to the user.
      */
-    public void showPath(String start, String end, Path<Node<CampusBuilding>> path) {
+    public void showPath(String start, String end, Path<Node<Point>> path) {
         System.out.println("Path from " + start + " to " + end + ":");
-        for(Path<Node<CampusBuilding>>.Segment pathSegment: path) {
-            CampusBuilding startBuilding = pathSegment.getStart().getData();
-            CampusBuilding endBuilding = pathSegment.getEnd().getData();
+        for(Path<Node<Point>>.Segment pathSegment: path) {
+            Point startBuilding = pathSegment.getStart().getData();
+            Point endBuilding = pathSegment.getEnd().getData();
             Direction dir = Direction.resolveDirection(startBuilding.getX(),
                                                        startBuilding.getY(),
                                                        endBuilding.getX(),

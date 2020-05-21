@@ -16,6 +16,7 @@ import graph.Edge;
 import graph.Node;
 import marvel.MarvelPaths;
 import pathfinder.CampusMap;
+import pathfinder.DijkstraAlgo;
 import pathfinder.datastructures.Path;
 import pathfinder.parser.CampusBuilding;
 import pathfinder.parser.CampusPath;
@@ -176,7 +177,7 @@ public class PathfinderTestDriver {
 
     private void findPath(String graphName, String startChar, String endChar) {
         DirectedGraph<CampusBuilding, Double> testGraph = graphs.get(graphName);
-        CampusMap testMap = new CampusMap();
+        DijkstraAlgo testMap = new DijkstraAlgo();
         testMap.setCampusGraph(testGraph);
         // Given startChar/endChar do not exist
         if (!testMap.shortNameExists(startChar) || !testMap.shortNameExists(endChar)) {
@@ -320,7 +321,7 @@ public class PathfinderTestDriver {
 
     private void listNodes(String graphName) {
         DirectedGraph<CampusBuilding, Double> testGraph = graphs.get(graphName);
-        CampusMap testMap = new CampusMap();
+        DijkstraAlgo testMap = new DijkstraAlgo();
         testMap.setCampusGraph(testGraph);
         Set<Node<CampusBuilding>> listOfNodes = testGraph.listNodes();
         String outputString = graphName + " contains:";
@@ -343,7 +344,7 @@ public class PathfinderTestDriver {
 
     private void listChildren(String graphName, String parentName) {
         DirectedGraph<CampusBuilding, Double> testGraph = graphs.get(graphName);
-        CampusMap testMap = new CampusMap();
+        DijkstraAlgo testMap = new DijkstraAlgo();
         testMap.setCampusGraph(testGraph);
         Set<Edge<CampusBuilding, Double>> listOfChildren = testGraph.
                 listChildren(new Node<CampusBuilding>(new CampusBuilding(parentName, parentName, 0, 0)), false);

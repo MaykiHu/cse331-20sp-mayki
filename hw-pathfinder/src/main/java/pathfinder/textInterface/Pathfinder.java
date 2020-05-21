@@ -22,6 +22,10 @@ public class Pathfinder {
 
     // This class does not represent an ADT.
 
+    // Files used for campus information
+    private static final String buildingsFile = "campus_buildings.tsv";
+    private static final String pathsFile = "campus_paths.tsv";
+
     /**
      * The main entry point for this application. Initializes and launches the application.
      *
@@ -29,9 +33,9 @@ public class Pathfinder {
      */
     public static void main(String[] args) {
         CampusMap map = new CampusMap();
+        map.initializeData(buildingsFile, pathsFile);
         TextInterfaceView view = new TextInterfaceView();
         TextInterfaceController controller = new TextInterfaceController(map, view);
-        //
         view.setInputHandler(controller);
         controller.launchApplication();
     }
