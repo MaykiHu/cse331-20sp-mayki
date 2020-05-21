@@ -26,6 +26,14 @@ public class Node<NodeType> {
         checkRep();
     }
 
+    /*
+     * Returns the data in this node
+     * @return the data in this node
+     */
+    public NodeType getData() {
+        return data;
+    }
+
     /**
      * Returns a string representation of this node.  The returned string will be in
      * the form: n'data'    ex: n8

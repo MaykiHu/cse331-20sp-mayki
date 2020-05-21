@@ -4,6 +4,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import pathfinder.datastructures.Path;
 import pathfinder.datastructures.Point;
+import pathfinder.parser.CampusBuilding;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -12,8 +13,8 @@ public class TestSegment {
 
     private static final double EPSILON = Math.pow(10.0D, -9.0D);
 
-    private static Path.Segment makeSegment(Point start, Point end, Double cost) {
-        Path path = new Path(start);
+    private static Path<Point>.Segment makeSegment(Point start, Point end, Double cost) {
+        Path<Point> path = new Path<>(start);
         path = path.extend(end, cost);
         return path.iterator().next();
     }

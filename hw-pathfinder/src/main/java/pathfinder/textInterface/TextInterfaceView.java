@@ -11,7 +11,9 @@
 
 package pathfinder.textInterface;
 
+import graph.Node;
 import pathfinder.datastructures.Path;
+import pathfinder.parser.CampusBuilding;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -137,19 +139,21 @@ public class TextInterfaceView {
      * @param end   The long name of the building at the end of the path.
      * @param path  The path to show to the user.
      */
-    public void showPath(String start, String end, Path path) {
+    public void showPath(String start, String end, Path<Node<CampusBuilding>> path) {
         System.out.println("Path from " + start + " to " + end + ":");
-        for(Path.Segment pathSegment : path) {
-            Direction dir = Direction.resolveDirection(pathSegment.getStart().getX(),
-                                                       pathSegment.getStart().getY(),
-                                                       pathSegment.getEnd().getX(),
-                                                       pathSegment.getEnd().getY(),
+        for(Path<Node<CampusBuilding>>.Segment pathSegment: path) {
+            CampusBuilding startBuilding = pathSegment.getStart().getData();
+            CampusBuilding endBuilding = pathSegment.getEnd().getData();
+            Direction dir = Direction.resolveDirection(startBuilding.getX(),
+                                                       startBuilding.getY(),
+                                                       endBuilding.getX(),
+                                                       endBuilding.getY(),
                                                        CoordinateProperties.INCREASING_DOWN_RIGHT);
             System.out.printf("\tWalk %.0f feet %s to (%.0f, %.0f)",
                               pathSegment.getCost(),
                               dir.name(),
-                              pathSegment.getEnd().getX(),
-                              pathSegment.getEnd().getY());
+                              endBuilding.getX(),
+                              endBuilding.getY());
             System.out.println();
         }
         System.out.printf("Total distance: %.0f feet", path.getCost());
