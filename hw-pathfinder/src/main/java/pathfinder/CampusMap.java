@@ -22,7 +22,7 @@ import pathfinder.parser.CampusPathsParser;
 
 import java.util.*;
 
-public class CampusMap implements ModelAPI {
+public class CampusMap implements ModelAPI<Node<Point>> {
     // mapping locations to buildings, location to paths, and names of buildings
     private Map<Point, CampusBuilding> campusMap = new HashMap<>();
     private DirectedGraph<Point, Double> locGraph = new DirectedGraph<>();
@@ -47,11 +47,13 @@ public class CampusMap implements ModelAPI {
             Point buildingLoc = new Point(building.getX(), building.getY());
             campusMap.put(buildingLoc, building); // Save location map
             nameMap.put(building.getShortName(), building); // Save name map
-            locGraph.addNode(new Node<Point>(buildingLoc));
+            locGraph.addNode(new Node<Point>(buildingLoc)); // Save building location
         }
         for (CampusPath path : paths) { // Add paths of locations
             Point pathStart = new Point(path.getX1(), path.getY1());
+            locGraph.addNode(new Node<Point>(pathStart)); // Save starting path loc
             Point pathEnd = new Point(path.getX2(), path.getY2());
+            locGraph.addNode(new Node<Point>(pathEnd)); // Save ending path loc
             Node<Point> startLoc = new Node<>(pathStart);
             Node<Point> endLoc = new Node<>(pathEnd);
             locGraph.addEdge(new Edge<Point, Double>
@@ -101,7 +103,6 @@ public class CampusMap implements ModelAPI {
             Set<Node<Point>> finishedMinNodes = new HashSet<>();
 
             nodeActivePaths.add(new Path<Node<Point>>(start)); // Path to itself, start
-
             while (!nodeActivePaths.isEmpty()) { // While still have paths to find
                 // minPath is the lowest-cost path in active and,
                 // if minDest isn't already 'finished,' is the

@@ -33,7 +33,7 @@ different ways, without requiring a lot of work to change things over.
  * This interface represents the API that the text interface
  * view/controller require models to implement.
  */
-public interface ModelAPI {
+public interface ModelAPI<PathType> {
 
     // Note: Do not change any of these method specifications, since code inside the view
     // and controller depend on this API.
@@ -69,7 +69,7 @@ public interface ModelAPI {
      *                                  {@literal null}, or not valid short names of buildings in
      *                                  this campus map.
      */
-    public Path<Node<Point>> findShortestPath(String startShortName, String endShortName);
+    public Path<PathType> findShortestPath(String startShortName, String endShortName);
     // You'll need to change this return type to use the generic Path once you've
     // updated the Path ADT to be generic.
 

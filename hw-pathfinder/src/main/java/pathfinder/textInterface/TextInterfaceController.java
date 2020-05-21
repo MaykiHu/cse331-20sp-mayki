@@ -32,7 +32,7 @@ public class TextInterfaceController implements InputHandler {
     /**
      * The data-carrier and processor for the application.
      */
-    private ModelAPI model;
+    private ModelAPI<Node<Point>> model;
 
     /**
      * The user-facing view and input receiver for this application.
@@ -46,7 +46,7 @@ public class TextInterfaceController implements InputHandler {
      * @param model A model to use for computation and data.
      * @param view  A view to use to display data to the user.
      */
-    public TextInterfaceController(ModelAPI model, TextInterfaceView view) {
+    public TextInterfaceController(ModelAPI<Node<Point>> model, TextInterfaceView view) {
         this.model = model;
         this.view = view;
     }
