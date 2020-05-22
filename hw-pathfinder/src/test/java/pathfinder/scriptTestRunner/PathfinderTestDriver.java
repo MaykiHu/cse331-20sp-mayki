@@ -14,12 +14,8 @@ package pathfinder.scriptTestRunner;
 import graph.DirectedGraph;
 import graph.Edge;
 import graph.Node;
-import marvel.MarvelPaths;
-import pathfinder.CampusMap;
-import pathfinder.DijkstraAlgo;
+import pathfinder.GenericDijkstra;
 import pathfinder.datastructures.Path;
-import pathfinder.parser.CampusBuilding;
-import pathfinder.parser.CampusPath;
 
 import java.io.*;
 import java.util.*;
@@ -33,7 +29,7 @@ public class PathfinderTestDriver {
     /**
      * String -> Graph: maps the names of graphs to the actual graph
      **/
-    private final Map<String, DirectedGraph<CampusBuilding, Double>> graphs = new HashMap<>();
+    private final Map<String, DirectedGraph<String, Double>> graphs = new HashMap<>();
     private final PrintWriter output;
     private final BufferedReader input;
 
@@ -141,9 +137,9 @@ public class PathfinderTestDriver {
     }
 
     private void containsNode(String graphName, String nodeName) {
-        DirectedGraph<CampusBuilding, Double> testGraph = graphs.get(graphName);
+        DirectedGraph<String, Double> testGraph = graphs.get(graphName);
         String outputString = graphName + " does ";
-        Node<CampusBuilding> node = new Node<CampusBuilding>(new CampusBuilding(nodeName, nodeName, 0, 0));
+        Node<String> node = new Node<>(nodeName);
         if (testGraph.containsNode(node)) {
             outputString += "contain " + nodeName;
         } else { // Does not contain node
@@ -161,7 +157,7 @@ public class PathfinderTestDriver {
     }
 
     private void getEdgeCount(String graphName) {
-        DirectedGraph<CampusBuilding, Double> testGraph = graphs.get(graphName);
+        DirectedGraph<String, Double> testGraph = graphs.get(graphName);
         output.println("Number of edges in " + graphName + " is: " + testGraph.getEdgeCount());
     }
 
@@ -176,28 +172,30 @@ public class PathfinderTestDriver {
     }
 
     private void findPath(String graphName, String startChar, String endChar) {
-        DirectedGraph<CampusBuilding, Double> testGraph = graphs.get(graphName);
-        DijkstraAlgo testMap = new DijkstraAlgo();
+        DirectedGraph<String, Double> testGraph = graphs.get(graphName);
+        GenericDijkstra<String> testMap = new GenericDijkstra<>();
         testMap.setCampusGraph(testGraph);
         // Given startChar/endChar do not exist
-        if (!testMap.shortNameExists(startChar) || !testMap.shortNameExists(endChar)) {
-            if (!testMap.shortNameExists(startChar)) {
+        Node<String> startNode = new Node<>(startChar);
+        Node<String> endNode = new Node<>(endChar);
+        if (!testGraph.containsNode(startNode) || !testGraph.containsNode(endNode)) {
+            if (!testGraph.containsNode(startNode)) {
                 output.println("unknown node " + startChar);
             }
-            if (!testMap.shortNameExists(endChar)) {
+            if (!testGraph.containsNode(endNode)) {
                 output.println("unknown node " + endChar);
             }
         } else { // Can search bc valid names
-            Path<Node<CampusBuilding>> path = testMap.findShortestPath(startChar, endChar);
+            Path<Node<String>> path = testMap.findShortestPath(new Node<>(startChar), new Node<>(endChar));
             output.println("path from " + startChar + " to " + endChar + ":");
             if (path == null) { // No path was found
                 output.println("no path found");
             } else { // Path was found
-                Iterator<Path<Node<CampusBuilding>>.Segment> segmentIterator = path.iterator();
+                Iterator<Path<Node<String>>.Segment> segmentIterator = path.iterator();
                 while (segmentIterator.hasNext()) { // Each segment in path
-                    Path<Node<CampusBuilding>>.Segment segment = segmentIterator.next();
-                    String startName = segment.getStart().getData().getShortName();
-                    String endName = segment.getEnd().getData().getShortName();
+                    Path<Node<String>>.Segment segment = segmentIterator.next();
+                    String startName = segment.getStart().toString();
+                    String endName = segment.getEnd().toString();
                     double weight = segment.getCost();
                     output.println(startName + " to " + endName + String.format(" with weight %.3f", weight));
                 }
@@ -216,7 +214,7 @@ public class PathfinderTestDriver {
     }
 
     private void createGraph(String graphName) {
-        graphs.put(graphName, new DirectedGraph<CampusBuilding, Double>());
+        graphs.put(graphName, new DirectedGraph<String, Double>());
         output.println("created graph " + graphName);
     }
 
@@ -232,8 +230,8 @@ public class PathfinderTestDriver {
     }
 
     private void addNode(String graphName, String nodeName) {
-        DirectedGraph<CampusBuilding, Double> testGraph = graphs.get(graphName);
-        Node<CampusBuilding> newNode = new Node<>(new CampusBuilding(nodeName, nodeName, 0, 0));
+        DirectedGraph<String, Double> testGraph = graphs.get(graphName);
+        Node<String> newNode = new Node<>(nodeName);
         testGraph.addNode(newNode);
         output.println("added node " + nodeName + " to " + graphName);
     }
@@ -250,8 +248,8 @@ public class PathfinderTestDriver {
     }
 
     private void removeNode(String graphName, String nodeName) {
-        DirectedGraph<CampusBuilding, Double> testGraph = graphs.get(graphName);
-        Node<CampusBuilding> oldNode = new Node<>(new CampusBuilding(nodeName, nodeName, 0, 0));
+        DirectedGraph<String, Double> testGraph = graphs.get(graphName);
+        Node<String> oldNode = new Node<>(nodeName);
         testGraph.removeNode(oldNode);
         output.println("removed node " + nodeName + " from " + graphName);
     }
@@ -272,12 +270,10 @@ public class PathfinderTestDriver {
     private void addEdge(String graphName, String parentName, String childName,
                          Double edgeLabel) {
 
-        DirectedGraph<CampusBuilding, Double> testGraph = graphs.get(graphName);
-        Node<CampusBuilding> parentNode = new Node<>
-                                        (new CampusBuilding(parentName, parentName, 0, 0));
-        Node<CampusBuilding> childNode = new Node<>
-                                        (new CampusBuilding(childName, childName, 0, 0));
-        Edge<CampusBuilding, Double> newEdge = new Edge<>(parentNode, childNode, edgeLabel);
+        DirectedGraph<String, Double> testGraph = graphs.get(graphName);
+        Node<String> parentNode = new Node<>(parentName);
+        Node<String> childNode = new Node<>(childName);
+        Edge<String, Double> newEdge = new Edge<>(parentNode, childNode, edgeLabel);
         testGraph.addEdge(newEdge);
         output.println(String.format("added edge %.3f", edgeLabel) + " from " + parentName + " to " + childName +
                 " in " + graphName);
@@ -299,12 +295,10 @@ public class PathfinderTestDriver {
     private void removeEdge(String graphName, String parentName, String childName,
                             Double edgeLabel) {
 
-        DirectedGraph<CampusBuilding, Double> testGraph = graphs.get(graphName);
-        Node<CampusBuilding> parentNode = new Node<>
-                                        (new CampusBuilding(parentName, parentName, 0, 0));
-        Node<CampusBuilding> childNode = new Node<>
-                                        (new CampusBuilding(childName, childName, 0, 0));
-        Edge<CampusBuilding, Double> oldEdge = new Edge<>(parentNode, childNode, edgeLabel);
+        DirectedGraph<String, Double> testGraph = graphs.get(graphName);
+        Node<String> parentNode = new Node<>(parentName);
+        Node<String> childNode = new Node<>(childName);
+        Edge<String, Double> oldEdge = new Edge<>(parentNode, childNode, edgeLabel);
         testGraph.removeEdge(oldEdge);
         output.println(String.format("removed edge %.3f", edgeLabel) + " from " + parentName + " to " + childName +
                 " in " + graphName);
@@ -320,14 +314,13 @@ public class PathfinderTestDriver {
     }
 
     private void listNodes(String graphName) {
-        DirectedGraph<CampusBuilding, Double> testGraph = graphs.get(graphName);
-        DijkstraAlgo testMap = new DijkstraAlgo();
+        DirectedGraph<String, Double> testGraph = graphs.get(graphName);
+        GenericDijkstra<String> testMap = new GenericDijkstra<>();
         testMap.setCampusGraph(testGraph);
-        Set<Node<CampusBuilding>> listOfNodes = testGraph.listNodes();
+        Set<Node<String>> listOfNodes = testGraph.listNodes();
         String outputString = graphName + " contains:";
-        for (Node<CampusBuilding> node : listOfNodes) {
-            String[] buildingName = testMap.splitBuildingInfo(node);
-            outputString += " " + buildingName[0]; // building name/ node name
+        for (Node<String> node : listOfNodes) {
+            outputString += " " + node.toString();
         }
         output.println(outputString);
     }
@@ -343,15 +336,14 @@ public class PathfinderTestDriver {
     }
 
     private void listChildren(String graphName, String parentName) {
-        DirectedGraph<CampusBuilding, Double> testGraph = graphs.get(graphName);
-        DijkstraAlgo testMap = new DijkstraAlgo();
+        DirectedGraph<String, Double> testGraph = graphs.get(graphName);
+        GenericDijkstra<String> testMap = new GenericDijkstra<>();
         testMap.setCampusGraph(testGraph);
-        Set<Edge<CampusBuilding, Double>> listOfChildren = testGraph.
-                listChildren(new Node<CampusBuilding>(new CampusBuilding(parentName, parentName, 0, 0)), false);
+        Set<Edge<String, Double>> listOfChildren = testGraph.
+                listChildren(new Node<>(parentName),false);
         String outputString = "the children of " + parentName + " in " + graphName + " are:";
-        for (Edge<CampusBuilding, Double> child : listOfChildren) {
-            String[] buildingInfo = testMap.splitBuildingInfo(child.getEnd()); // [0] contains name
-            outputString += " " + buildingInfo[0] + String.format("(%.3f", child.getLabel()) + ")";
+        for (Edge<String, Double> child : listOfChildren) {
+            outputString += " " + child.toString() + String.format("(%.3f", child.getLabel()) + ")";
         }
         output.println(outputString);
     }
@@ -366,7 +358,7 @@ public class PathfinderTestDriver {
     }
 
     private void isEmpty(String graphName) {
-        DirectedGraph<CampusBuilding, Double> testGraph = graphs.get(graphName);
+        DirectedGraph<String, Double> testGraph = graphs.get(graphName);
         String emptyStatus = " is not empty";
         if (testGraph.isEmpty()) {
             emptyStatus = " is empty";
@@ -384,7 +376,7 @@ public class PathfinderTestDriver {
     }
 
     private void getSize(String graphName) {
-        DirectedGraph<CampusBuilding, Double> testGraph = graphs.get(graphName);
+        DirectedGraph<String, Double> testGraph = graphs.get(graphName);
         output.println("size of " + graphName + " is " + testGraph.size());
     }
 
@@ -398,7 +390,7 @@ public class PathfinderTestDriver {
     }
 
     private void toString(String graphName) {
-        DirectedGraph<CampusBuilding, Double> testGraph = graphs.get(graphName);
+        DirectedGraph<String, Double> testGraph = graphs.get(graphName);
         output.println(testGraph.toString());
     }
 

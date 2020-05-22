@@ -22,11 +22,11 @@ import pathfinder.parser.CampusPathsParser;
 
 import java.util.*;
 
-public class CampusMap implements ModelAPI<Node<Point>> {
+public class CampusMap extends GenericDijkstra<Point> implements ModelAPI<Node<Point>> {
     // mapping locations to buildings, location to paths, and names of buildings
     private Map<Point, CampusBuilding> campusMap = new HashMap<>();
     private DirectedGraph<Point, Double> locGraph = new DirectedGraph<>();
-    private Map<String, CampusBuilding> nameMap = new HashMap<>();
+    private Map<String, Node<CampusBuilding>> nameMap = new HashMap<>();
 
     /*
      *  Where the AF would go, but this isn't an ADT bc we are using as a program
@@ -46,7 +46,7 @@ public class CampusMap implements ModelAPI<Node<Point>> {
         for (CampusBuilding building : buildings) { // Add each building as a node
             Point buildingLoc = new Point(building.getX(), building.getY());
             campusMap.put(buildingLoc, building); // Save location map
-            nameMap.put(building.getShortName(), building); // Save name map
+            nameMap.put(building.getShortName(), new Node<CampusBuilding>(building)); // Save name map
             locGraph.addNode(new Node<Point>(buildingLoc)); // Save building location
         }
         for (CampusPath path : paths) { // Add paths of locations
@@ -72,16 +72,16 @@ public class CampusMap implements ModelAPI<Node<Point>> {
         if (!shortNameExists(shortName)) { // shortName does not exist
             throw new IllegalArgumentException();
         } else { // shortName exists in graph
-            return nameMap.get(shortName).getLongName();
+            return nameMap.get(shortName).getData().getLongName();
         }
     }
 
     @Override
     public Map<String, String> buildingNames() {
         Map<String, String> shortLongNames = new HashMap<>();
-        Iterator<Map.Entry<String, CampusBuilding>> buildingItr = nameMap.entrySet().iterator();
+        Iterator<Map.Entry<String, Node<CampusBuilding>>> buildingItr = nameMap.entrySet().iterator();
         while (buildingItr.hasNext()) { // for each building
-            CampusBuilding building = buildingItr.next().getValue();
+            CampusBuilding building = buildingItr.next().getValue().getData();
             shortLongNames.put(building.getShortName(), building.getLongName());
         }
         return shortLongNames; // map of short to long names of all campus buildings
@@ -94,48 +94,15 @@ public class CampusMap implements ModelAPI<Node<Point>> {
         if (notValidName) {
             throw new IllegalArgumentException();
         } else { // Is valid, can try to find shortest path
+            CampusBuilding startBuilding = nameMap.get(startShortName).getData();
+            CampusBuilding endBuilding = nameMap.get(endShortName).getData();
             Node<Point> start = new Node<>(new Point
-                    (nameMap.get(startShortName).getX(), nameMap.get(startShortName).getY()));
+                    (startBuilding.getX(), startBuilding.getY()));
             Node<Point> dest = new Node<>(new Point
-                    (nameMap.get(endShortName).getX(), nameMap.get(endShortName).getY()));
-            PriorityQueue<Path<Node<Point>>> nodeActivePaths =
-                                                        new PriorityQueue<>(new PathComp());
-            Set<Node<Point>> finishedMinNodes = new HashSet<>();
-
-            nodeActivePaths.add(new Path<Node<Point>>(start)); // Path to itself, start
-            while (!nodeActivePaths.isEmpty()) { // While still have paths to find
-                // minPath is the lowest-cost path in active and,
-                // if minDest isn't already 'finished,' is the
-                // minimum-cost path to the node minDest -- from spec algorithm
-                Path<Node<Point>> minPath = nodeActivePaths.remove();
-                Node<Point> minDest = minPath.getEnd();
-                if (minDest.equals(dest)) { // Reached min path dest
-                    return minPath;
-                }
-                if (finishedMinNodes.contains(minDest)) { // min dest is in finished
-                    continue;
-                }
-                // For all children edges of minDest
-                for (Edge<Point, Double> edge : locGraph.listChildren(minDest, false)) {
-                    Node<Point> child = edge.getEnd();
-                    if (!finishedMinNodes.contains(child)) { // If child not in finished min nodes
-                        Path<Node<Point>> newPath = // minPath + this child's edge
-                                            minPath.extend(child, edge.getLabel());
-                        nodeActivePaths.add(newPath);
-                    }
-                }
-                finishedMinNodes.add(minDest);
-            }
-            // loop terminated
-            return null; // no path exists
+                    (endBuilding.getX(), endBuilding.getY()));
+            GenericDijkstra<Point> superAlgo = new GenericDijkstra<>();
+            superAlgo.setCampusGraph(locGraph);
+            return superAlgo.findShortestPath(start, dest);
         }
     }
-
-    // Comparator to work with at least Doubles
-    private class PathComp implements Comparator<Path<Node<Point>>> {
-        public int compare(Path<Node<Point>> node1, Path<Node<Point>> node2) {
-            return Double.compare(node1.getCost(), node2.getCost());
-        }
-    }
-
 }
