@@ -30,9 +30,13 @@ class GridSizePicker extends Component<GridSizePickerProps> {
         // We wrote "any" here because the type of this object is long and complex.
         // If you're curious, the exact type would be: React.ChangeEvent<HTMLInputElement>
         //
-        // TODO - Not currently doing any validation or error handling. Should probably add some...
-        const newSize: number = parseInt(event.target.value);
-        this.props.onChange(newSize); // Tell our parent component about the new size.
+        const stringText: string = event.target.value;
+        const newSize: number = parseInt(stringText);
+        if (newSize > 100 || newSize < 0) { // Size cannot exceed 100 or be negative
+            alert("Size must be an integer between 0 and 100 (inclusive).");
+        } else { // Valid size
+            this.props.onChange(newSize); // Tell our parent component about the new size.
+        }
     };
 
     render() {
@@ -44,7 +48,7 @@ class GridSizePicker extends Component<GridSizePickerProps> {
                         value={this.props.value}
                         onChange={this.onInputChange}
                         type="number"
-                        min={1}
+                        min={0}
                         max={100}
                     />
                 </label>

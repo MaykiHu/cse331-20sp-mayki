@@ -91,13 +91,17 @@ class Grid extends Component<GridProps, GridState> {
      * be drawn.
      */
     getCoordinates = (): [number, number][] => {
-        // A hardcoded 4x4 grid. Probably not going to work when we change the grid size...
-        return [
-            [100, 100], [100, 200], [100, 300], [100, 400],
-            [200, 100], [200, 200], [200, 300], [200, 400],
-            [300, 100], [300, 200], [300, 300], [300, 400],
-            [400, 100], [400, 200], [400, 300], [400, 400]
-        ];
+        let points : [number, number][] = []; // Where points are stored
+        for (let row = 0; row < this.props.size; row++) {
+            for (let col = 0; col < this.props.size; col++) {
+                let scalar = (this.props.width / (this.props.size + 1)) // shift/scale amount
+                points.push([row * scalar + scalar, col * scalar + scalar]);
+            }
+        }
+        // Return the scaled coordinates where grid dots should be drawn
+        return (
+            points
+        );
     };
 
     // You could write CanvasRenderingContext2D as the type for ctx, if you wanted.
@@ -111,11 +115,22 @@ class Grid extends Component<GridProps, GridState> {
         ctx.fill();
     };
 
+    /*
+     * Returns the size of the grid
+     */
+    getSize = (): number => {
+        if (Number.isNaN(this.props.size)) { // If empty size/string
+            return 0;
+        } else {
+            return this.props.size;
+        }
+    }
+
     render() {
         return (
             <div id="grid">
                 <canvas ref={this.canvasReference} width={this.props.width} height={this.props.height}/>
-                <p>Current Grid Size: 4</p>
+                <p>Current Grid Size: {this.getSize()}</p>
             </div>
         );
     }
