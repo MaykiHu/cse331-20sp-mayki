@@ -228,11 +228,20 @@ class Grid extends Component<GridProps, GridState> {
         }
     }
 
+    download = () => {
+        let link = document.createElement('a');
+        link.download = 'PollockDots.png';
+        // @ts-ignore
+        link.href = document.getElementById('drawing').toDataURL();
+        link.click();
+    }
+
     render() {
         return (
             <div id="grid">
-                <canvas ref={this.canvasReference} width={this.props.width} height={this.props.height}/>
+                <canvas id="drawing" ref={this.canvasReference} width={this.props.width} height={this.props.height}/>
                 <p>Current Grid Size: {this.getSize()}</p>
+                <button onClick={this.download}>Download Drawing</button>
             </div>
         );
     }

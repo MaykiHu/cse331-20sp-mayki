@@ -1,10 +1,16 @@
 CSE 331 Homework.  Answers to written questions.
 Edit this file to supply your answers.
 
-Name:  <replace this with your name>
+Name:  Mayki Hu
 
 Describe any additional functionality you added to your application, or any
 significant changes you made to the starter code beyond the basic requirements
 of the assignment, below:
+
+1) I added a Download button: "Download Drawing" to allow the user to
+download their canvas drawing (including dots, lines, and background of canvas).
+The file is saved under the name "PollockDots.png" because they are an awesome
+dot drawings.. reminiscent of Jackson Pollock (who use dots in his art)!!  :P
+I chose to use .png as the file format as well because for a lossless download.
 
 
