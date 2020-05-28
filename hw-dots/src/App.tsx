@@ -20,7 +20,8 @@ import "./App.css";
 interface AppState {
     gridSize: number;  // size of the grid to display
     edgeList: string;  // the string of edges to display
-    clicked: boolean;    // if draw button has been clicked
+    clicked: boolean;  // if draw button has been clicked
+    dotColor: string;  // color of the dots
 }
 
 class App extends Component<{}, AppState> { // <- {} means no props.
@@ -30,7 +31,8 @@ class App extends Component<{}, AppState> { // <- {} means no props.
         this.state = {
             gridSize: 4,
             edgeList: "",
-            clicked: false
+            clicked: false,
+            dotColor: "white"
         };
     }
 
@@ -47,13 +49,19 @@ class App extends Component<{}, AppState> { // <- {} means no props.
         });
     };
 
+    updateDotColor = (newColor: string) => {
+        this.setState({
+            dotColor: newColor
+        });
+    };
+
     render() {
         const canvas_size = 500;
         return (
             <div>
                 <p id="app-title">Connect the Dots!</p>
                 <GridSizePicker value={this.state.gridSize.toString()} onChange={this.updateGridSize}/>
-                <Grid size={this.state.gridSize} width={canvas_size} height={canvas_size} edges={this.state.edgeList} clicked={this.state.clicked}/>
+                <Grid size={this.state.gridSize} width={canvas_size} height={canvas_size} edges={this.state.edgeList} clicked={this.state.clicked} dotColor={this.state.dotColor} onChange={this.updateDotColor}/>
                 <EdgeList value={this.state.edgeList} onChange={this.updateGridEdges} clicked={this.state.clicked}/>
             </div>
 

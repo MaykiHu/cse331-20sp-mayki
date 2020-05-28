@@ -17,6 +17,8 @@ interface GridProps {
     height: number;  // height of the canvas on which to draw
     edges: string;   // the information of all the edges
     clicked: boolean;// if draw button has been clicked
+    dotColor: string;// color of the dots
+    onChange(color: string): void; // called for a color change for dots
 }
 
 interface GridState {
@@ -36,7 +38,7 @@ class Grid extends Component<GridProps, GridState> {
     constructor(props: GridProps) {
         super(props);
         this.state = {
-            backgroundImage: null  // An image object to render into the canvas.
+            backgroundImage: null,  // An image object to render into the canvas.
         };
         this.canvasReference = React.createRef();
     }
@@ -105,10 +107,10 @@ class Grid extends Component<GridProps, GridState> {
      */
     validateEdges = (): boolean => {
         let isValid = true;
-        let alertMessage = "There was an error with some of your line input.\nFor reference, the correct" +
-            "form for each line is: x1,y1 x2,y2 color\n\n";
+        let alertMessage = "There was an error with some of your line input.\nFor reference, " +
+            "the correct form for each line is: x1,y1 x2,y2 color\n\n";
         // Return the scaled coordinates where grid edges should be drawn
-        if (isNaN(this.props.edges.length) || this.props.edges.length === 0) { // if empty edges drawn
+        if (this.props.edges.length === 0) { // if empty edges drawn
             return !isValid; // Cannot draw nothing, so false
         }
         let edgeParser = this.props.edges.split("\n"); // Split edge input into lines of edges
@@ -136,17 +138,22 @@ class Grid extends Component<GridProps, GridState> {
                                 ": Coordinate(s) contain non-integer value(s).\n";
                             isValid = false;
                         } else { // Given numbers
-                            // Update the size required by point to fit in the grid
-                            sizeRequired = Math.max(xPoint + 1, yPoint + 1, sizeRequired);
+                            if (xPoint < 0 || yPoint < 0) { // Given negative numbers
+                                alertMessage += "Line " + line +
+                                    ": Coordinate(s) contain negative value(s).\n"
+                                isValid = false;
+                            } else { // We can update to check for size in the end
+                                sizeRequired = Math.max(xPoint + 1, yPoint + 1, sizeRequired);
+                            }
                         }
                     }
                 }
             }
         }
         // Last check.. can the grid fit all the points?
-        if (sizeRequired > this.getSize()) { // If size required is greater than size of grid
-            alertMessage += "Cannot draw edges, grid must be at least size " + sizeRequired + ".\n";
-            isValid = false;
+        if (sizeRequired > this.getSize() && isValid) { // If everything but size was valid
+            alert("Cannot draw edges, grid must be at least size " + sizeRequired + ".");
+            return !isValid; // size is invalid, so invalid overall now
         }
         if (!isValid) { // If edges aren't valid
             alert(alertMessage); // alert the user why
@@ -199,7 +206,7 @@ class Grid extends Component<GridProps, GridState> {
 
     // You could write CanvasRenderingContext2D as the type for ctx, if you wanted.
     drawCircle = (ctx: any, coordinate: [number, number]) => {
-        ctx.fillStyle = "white";
+        ctx.fillStyle = this.props.dotColor;
         // Generally use a radius of 4, but when there are lots of dots on the grid (> 50)
         // we slowly scale the radius down so they'll all fit next to each other.
         const radius = Math.min(4, 100 / this.props.size);
@@ -229,18 +236,25 @@ class Grid extends Component<GridProps, GridState> {
     }
 
     download = () => {
-        let link = document.createElement('a');
-        link.download = 'PollockDots.png';
+        let link = document.createElement('a'); // Create link
+        link.download = 'PollockDots.png'; // What the file name is
+        // canvasReference will retrieve the object w/ react, so ignore below
         // @ts-ignore
-        link.href = document.getElementById('drawing').toDataURL();
-        link.click();
+        link.href = this.canvasReference.current.toDataURL();
+        link.click(); // Click to download the link
+    }
+
+    updateDotColor = (event: any) => {
+        const stringColor = event.target.value;
+        this.props.onChange(stringColor);
     }
 
     render() {
         return (
             <div id="grid">
-                <canvas id="drawing" ref={this.canvasReference} width={this.props.width} height={this.props.height}/>
+                <canvas ref={this.canvasReference} width={this.props.width} height={this.props.height}/>
                 <p>Current Grid Size: {this.getSize()}</p>
+                <p>Dot Color: <input value={this.props.dotColor} onChange={this.updateDotColor}/></p>
                 <button onClick={this.download}>Download Drawing</button>
             </div>
         );

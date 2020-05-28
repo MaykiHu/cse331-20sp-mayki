@@ -11,6 +11,26 @@ of the assignment, below:
 download their canvas drawing (including dots, lines, and background of canvas).
 The file is saved under the name "PollockDots.png" because they are an awesome
 dot drawings.. reminiscent of Jackson Pollock (who use dots in his art)!!  :P
-I chose to use .png as the file format as well because for a lossless download.
+I chose to use .png as the file format as well for a lossless download.
+I tried to use React to do this, not bypassing by using document.getElementId
+but I'm not sure if I did it completely right.  It works though by creating
+a link that is then clicked.  :)  Would love feedback on the equivalent of
+document.createElement or if there is a way to use React to do it completely!
 
+2) To make it fun, since the user can save their image and have various edge colors,
+why not add the option to change dot colors?  :) The default color is white, and the dot color
+will remain the same unless changed with a valid color (ex: red, white, blue, #00FF00, etc.).
+While typing, it will remain its previous color until a valid color has been typed.
 
+3) I decided to add a CSS workaround to have line numbers show up next to the edges typed.
+Since we are telling users when there is an error, it would be helpful to easily "see" where
+the line number is to quickly correct it.  Just a user-friendly design I wanted to add.
+I did this by saving an image of just line numbers from the dark-mode console, lines go up to 200,
+and made it the background of a text box so that it displays on the side with some css alignment.
+Note that this does not work for text that wraps beyond one line since it is a static background,
+nor does it work for lines that go above 200 lines.  I should implement another solution in
+the future.  :(  I just wanted to have something now for the user.
+Dark-mode console rocks (err, what I use), so I formatted the text box colors to match up as well.
+I feel like with so much screen time, it's calmer on the eyes.  Take care of your eyes.  :)
+That's all!  :) Have a great day and stay safe!!  Bye bye!!  Thank you for your awesome work.
+:) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :)

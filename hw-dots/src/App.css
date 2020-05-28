@@ -59,3 +59,13 @@ ID of "app-title". Also makes the text bigger, bold, and adds some space around 
     font-weight: bold;
     margin: 10px;
 }
+
+/* Formats the text box to have lines by using a .png with line numbers (up to line 1500 is numbered),
+and format text within text box to align with line numbers. */
+textarea {
+    /* image w/ line numbers as background, looks like dark-mode console :) */
+    background: #303030 url("textboxBackground.png") no-repeat local;
+    color: #b9b9a3;
+    padding-left: 24px;  /* To make text insertable at the most far-left as in original text box */
+    line-height: 16px;   /* The space between each line to align so that matches line number */
+}
