@@ -19,6 +19,8 @@ import "./App.css";
 
 interface AppState {
     gridSize: number;  // size of the grid to display
+    edgeList: string;  // the string of edges to display
+    clicked: boolean;    // if draw button has been clicked
 }
 
 class App extends Component<{}, AppState> { // <- {} means no props.
@@ -27,6 +29,8 @@ class App extends Component<{}, AppState> { // <- {} means no props.
         super(props);
         this.state = {
             gridSize: 4,
+            edgeList: "",
+            clicked: false
         };
     }
 
@@ -36,14 +40,21 @@ class App extends Component<{}, AppState> { // <- {} means no props.
         });
     };
 
+    updateGridEdges = (newEdges: string, newClick: boolean) => {
+        this.setState({
+            clicked: newClick,
+            edgeList: newEdges
+        });
+    };
+
     render() {
         const canvas_size = 500;
         return (
             <div>
                 <p id="app-title">Connect the Dots!</p>
                 <GridSizePicker value={this.state.gridSize.toString()} onChange={this.updateGridSize}/>
-                <Grid size={this.state.gridSize} width={canvas_size} height={canvas_size}/>
-                <EdgeList onChange={(value: any) => {console.log("EdgeList onChange", value)}}/>
+                <Grid size={this.state.gridSize} width={canvas_size} height={canvas_size} edges={this.state.edgeList} clicked={this.state.clicked}/>
+                <EdgeList value={this.state.edgeList} onChange={this.updateGridEdges} clicked={this.state.clicked}/>
             </div>
 
         );
