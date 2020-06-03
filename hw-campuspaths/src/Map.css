@@ -31,33 +31,61 @@ canvas {
 /* Left-aligns the "Campus Pathfinder" text. Also makes the text bigger, bold, and adds
 some space around the title. Re-used some code from Dots assignment */
 #app-title {
-    text-align: left;
+    text-align: center;
+    color: purple;
     font-size: 30px;
     font-weight: bold;
-    margin: 10px;
+}
+
+/* Makes map and elements inside map div align center */
+#map {
+    display: inline-block;
+    text-align: center;
+    background-color: darkgoldenrod;
+    border-radius: 20px;
 }
 
 /* The div for the dropdowns, so they appear inline with some nice spacing and border */
 #dropdown {
     display: inline-flex;
-    margin: 10px;
     padding-right: 1%;
     padding-left: 1%;
     border-style: dashed;
+    border-radius: 10px;
+    background-color: rebeccapurple;
 }
 
-/* For spacing between start/stop dropdowns */
+/* For spacing between start/stop dropdowns and color */
 #start-dropdown {
     margin-right: 5%;
+    color: gold;
 }
 
-/* For spacing of find shortest path button */
+select {
+    background-color: lightgoldenrodyellow;
+}
+
+option {
+    background-color: goldenrod;
+    color: rebeccapurple;
+}
+
+/* For color of dropdown customization */
+#stop-dropdown {
+    color: gold;
+}
+
+/* For spacing of find shortest path button and customization */
 #find-button {
     margin: 5%;
     height: fit-content;
+    background-color: gold;
+    border-radius: 10px;
 }
 
 /* For spacing of clear all button, top and bottom have some margin */
 #clear-button {
     margin: 5% 0 5% 0;
+    background-color: gold;
+    border-radius: 10px;
 }
