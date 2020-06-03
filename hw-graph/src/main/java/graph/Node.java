@@ -2,6 +2,7 @@ package graph;
 
 /**
  * This class represents the concept of a node in a graph, capable of containing data.
+ * There is a type parameter NodeType representing the type of data stored in the node.
  */
 
 public class Node<NodeType> {

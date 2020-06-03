@@ -22,16 +22,46 @@ import pathfinder.parser.CampusPathsParser;
 
 import java.util.*;
 
-public class CampusMap extends GenericDijkstra<Point> implements ModelAPI<Node<Point>> {
+/**
+ * This class represents an abstract map of the UW College Campus Map.  There are buildings
+ * on campus, having short and long names, as well as locations that are traversable
+ * on campus.  This class will let you know what is on campus, as it is a map of campus.
+ */
+
+public class CampusMap implements ModelAPI {
     // mapping locations to buildings, location to paths, and names of buildings
     private Map<Point, CampusBuilding> campusMap = new HashMap<>();
     private DirectedGraph<Point, Double> locGraph = new DirectedGraph<>();
     private Map<String, Node<CampusBuilding>> nameMap = new HashMap<>();
 
-    /*
-     *  Where the AF would go, but this isn't an ADT bc we are using as a program
-     *  Where the rep invariant would go
+    /* Abstraction Function:
+     *   A CampusMap m represents a map of campus.  There is a DirectedGraph locGraph
+     *   which represents nodes of all locations that can be travelled upon on campus
+     *   and their respective locations that can be reached from that node.
+     *   There is a campusMap which maps a campus's location to its respective campus
+     *   building information.  Lastly, there is a nameMap which maps a short name of
+     *   the campus building to its campus building node.  All in all, the CampusMap m
+     *   represents a mapping of campus information on its locations and its buildings.
      */
+
+    // Representation invariant for every CampusMap m:
+    // m.campusMap != null && m.locGraph != null && m.nameMap != null
+    // forall i such that (0 <= i < m.locGraph.size()), m.locGraph.get(i) != null) &&
+    // forall i such that (0 <= i < m.locGraph.size() - 1), m.locGraph.get(i) != m.locGraph.get(i+1)) &&
+    // forall j such that (0 <= j < m.locGraph.get(i).size()), m.locGraph.get(i).get(j) != null) &&
+    // forall j such that (0 <= j < m.locGraph.get(i).size() - 1),
+    //      m.locGraph.get(i).get(j) != m.locGraph.get(i).get(i+1)) &&
+    // forall i such that (0 <= i < m.campusMap.size()), m.campusMap.get(i) != null) &&
+    // forall i such that (0 <= i < m.nameMap.size()), m.nameMap.get(i) != null)
+    // In other words,
+    //   * the locGraph, campusMap, and nameMap fields always points to some usable object
+    //   * no element in locGraph, campusMap, and nameMap is null
+    //   * there are no duplicate nodes in the locGraph, campusMap, and nameMap (by definition)
+    //   * no outgoing edge in the locGraph for any node is null
+    //   * there are no duplicate outgoing edges in the locGraph for any node (DirectedGraph rep)
+
+    // Change this to run expensive methods in checkRep() if set to true, otherwise does not run.
+    private final boolean needsCheckRep = false;
 
     /*
      *  Stores data on campus buildings and paths from specified file name
@@ -40,7 +70,7 @@ public class CampusMap extends GenericDijkstra<Point> implements ModelAPI<Node<P
      *  @spec.requires buildingsFile and pathsFile be under data folder and valid
      *  @return a DirectedGraph of location paths
      */
-    public DirectedGraph<Point, Double> initializeData(String buildingsFile, String pathsFile) {
+    public void initializeData(String buildingsFile, String pathsFile) {
         List<CampusBuilding> buildings = CampusPathsParser.parseCampusBuildings(buildingsFile);
         List<CampusPath> paths = CampusPathsParser.parseCampusPaths(pathsFile);
         for (CampusBuilding building : buildings) { // Add each building as a node
@@ -59,7 +89,7 @@ public class CampusMap extends GenericDijkstra<Point> implements ModelAPI<Node<P
             locGraph.addEdge(new Edge<Point, Double>
                     (startLoc, endLoc, path.getDistance()));
         }
-        return locGraph;
+        checkRep();
     }
 
     @Override
@@ -103,6 +133,30 @@ public class CampusMap extends GenericDijkstra<Point> implements ModelAPI<Node<P
             GenericDijkstra<Point> superAlgo = new GenericDijkstra<>();
             superAlgo.setCampusGraph(locGraph);
             return superAlgo.findShortestPath(start, dest);
+        }
+    }
+
+    /*
+    Throws an exception if the representation invariant is violated.
+ */
+    private void checkRep() {
+        assert (locGraph != null && campusMap != null && nameMap != null); // fields are not null
+        if (needsCheckRep) { // Only check expensive checks if needed
+            // DirectedGraph checkRep is checked implicitly if enabled in DirectedGraph.java
+            // Checks campusMap mapping valid location to valid building
+            Iterator<Map.Entry<Point, CampusBuilding>> buildingMapItr = campusMap.entrySet().iterator();
+            while (buildingMapItr.hasNext()) {
+                Map.Entry<Point, CampusBuilding> entry = buildingMapItr.next();
+                assert (entry.getKey() != null) : "Cannot have a null location mapping";
+                assert(entry.getValue() != null) : "Cannot map location to a null building";
+            }
+            // Checks nameMap mapping valid name to valid building node
+            Iterator<Map.Entry<String, Node<CampusBuilding>>> nameMapItr = nameMap.entrySet().iterator();
+            while (nameMapItr.hasNext()) {
+                Map.Entry<String, Node<CampusBuilding>> entry = nameMapItr.next();
+                assert (entry.getKey() != null) : "Cannot have a null name mapping";
+                assert(entry.getValue().getData() != null) : "Cannot map name to a null building";
+            }
         }
     }
 }

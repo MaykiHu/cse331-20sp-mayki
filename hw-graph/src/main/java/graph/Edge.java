@@ -2,6 +2,8 @@ package graph;
 
 /**
  * This class represents the concept of an edge in a graph, which may be labelled.
+ * There are type parameters NodeType and EdgeType, each representing the data type stored
+ * in the respective Node and Edge.
  */
 
 public class Edge<NodeType, EdgeType> {

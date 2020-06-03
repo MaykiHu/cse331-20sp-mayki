@@ -5,6 +5,8 @@ import java.util.*;
 /**
  * This class represents the concept of a directed graph, which have may have Nodes and Edges.
  * In this directed graph, no same startNode to endNode edge will have the same label.
+ * A DirectedGraph has type parameters, NodeType the type of data stored in the node (ex: String)
+ * and EdgeType the type of data stored in the edges (ex: Point).
  */
 
 public class DirectedGraph<NodeType, EdgeType> implements Graph<NodeType, EdgeType> {
@@ -145,20 +147,16 @@ public class DirectedGraph<NodeType, EdgeType> implements Graph<NodeType, EdgeTy
     }
 
     /**
-     * Returns a alphabetically-sorted unmodifiable set of nodes associated with this graph
-     * Nodes are sorted alphabetically.
+     * Returns an unordered unmodifiable set of nodes associated with this graph
      * @return an unmodifiable set of nodes of this graph
      */
     @Override
     public Set<Node<NodeType>> listNodes() {
-        Map<Node<NodeType>, Set<Edge<NodeType, EdgeType>>> sortedGraph = new TreeMap<>(new NodeComp());
-        sortedGraph.putAll(graph);
-        return Collections.unmodifiableSet(sortedGraph.keySet());
+        return Collections.unmodifiableSet(graph.keySet());
     }
 
     /**
-     * Returns a alphabetically-sorted unmodifiable set of children edges of this node
-     * Edges are sorted first by nodes alphabetically, then the label on the edge alphabetically.
+     * Returns an unsorted unmodifiable set of children edges of this node
      * @param parentNode that is in this graph
      * @param includeSelf boolean to include parent as a child, true if considering reflexive edges
      * @spec.requires node is in graph, boolean is not null
@@ -166,13 +164,13 @@ public class DirectedGraph<NodeType, EdgeType> implements Graph<NodeType, EdgeTy
      */
     @Override
     public Set<Edge<NodeType, EdgeType>> listChildren(Node<NodeType> parentNode, boolean includeSelf) {
-        Set<Edge<NodeType, EdgeType>> sortedEdges = new TreeSet<>(new EdgeComp());
+        Set<Edge<NodeType, EdgeType>> edges = new HashSet<>();
         for (Edge<NodeType, EdgeType> child : graph.get(parentNode)) {
             if (!child.getEnd().equals(parentNode) || includeSelf) { // considering reflexive
-                sortedEdges.add(child);
+                edges.add(child);
             }
         }
-        return Collections.unmodifiableSet(sortedEdges);
+        return Collections.unmodifiableSet(edges);
     }
 
     /**
@@ -264,30 +262,6 @@ public class DirectedGraph<NodeType, EdgeType> implements Graph<NodeType, EdgeTy
                     assert (e != null) : "Graph cannot have a null edge";
                 }
             }
-        }
-    }
-
-    /*
-        Computes how to compare between two nodes
-     */
-    private class NodeComp implements Comparator<Node<NodeType>> {
-        public int compare(Node<NodeType> node1, Node<NodeType> node2) {
-            // Since toString() represents each node distinctly, we can compare via toString()
-            return node1.toString().compareTo(node2.toString());
-        }
-    }
-
-    /*
-        Computes how to compare between two edges
-     */
-    private class EdgeComp implements Comparator<Edge<NodeType, EdgeType>> {
-        public int compare(Edge<NodeType, EdgeType> edge1, Edge<NodeType, EdgeType> edge2) {
-            // Since toString() represents each edge/node distinctly, we can compare via toString()
-            // We have to rearrange the toString() such that it evaluates
-            // startNode -> endNode -> label
-            String e1 = edge1.getStart().toString() + edge1.getEnd().toString() + edge1.getLabel();
-            String e2 = edge2.getStart().toString() + edge2.getEnd().toString() + edge2.getLabel();
-            return e1.compareTo(e2);
         }
     }
 }

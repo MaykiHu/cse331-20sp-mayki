@@ -298,6 +298,16 @@ public class MarvelTestDriver {
                 " in " + graphName);
     }
 
+    /*
+     * Computes how to compare between two nodes
+     */
+    private class NodeComp implements Comparator<Node<String>> {
+        public int compare(Node<String> node1, Node<String> node2) {
+            // Compare their respective data
+            return node1.getData().compareTo(node2.getData());
+        }
+    }
+
     private void listNodes(List<String> arguments) {
         if (arguments.size() != 1) {
             throw new CommandException("Bad arguments to ListNodes: " + arguments);
@@ -309,7 +319,8 @@ public class MarvelTestDriver {
 
     private void listNodes(String graphName) {
         DirectedGraph<String, String> testGraph = graphs.get(graphName);
-        Set<Node<String>> listOfNodes = testGraph.listNodes();
+        Set<Node<String>> listOfNodes = new TreeSet<>(new NodeComp());
+        listOfNodes.addAll(testGraph.listNodes());
         String outputString = graphName + " contains:";
         for (Node node : listOfNodes) {
             outputString += " " + node.toString();
@@ -330,12 +341,27 @@ public class MarvelTestDriver {
     private void listChildren(String graphName, String parentName) {
         DirectedGraph<String, String> testGraph = graphs.get(graphName);
         parentName = parentName.replaceAll("_", " ");
-        Set<Edge<String, String>> listOfChildren = testGraph.listChildren(new Node<String>(parentName), false);
+        Set<Edge<String, String>> listOfChildren = new TreeSet<>(new EdgeComp());
+        listOfChildren.addAll(testGraph.listChildren(new Node<String>(parentName), false));
         String outputString = "the children of " + parentName + " in " + graphName + " are:";
         for (Edge child : listOfChildren) {
             outputString += " " + child.getEnd().toString() + "(" + child.getLabel() + ")";
         }
         output.println(outputString);
+    }
+
+    /*
+        Computes how to compare between two edges
+     */
+    private static class EdgeComp implements Comparator<Edge<String, String>> {
+        public int compare(Edge<String, String> edge1, Edge<String, String> edge2) {
+            // Since toString() represents each edge/node distinctly, we can compare via toString()
+            // We have to rearrange the toString() such that it evaluates
+            // startNode -> endNode -> label
+            String e1 = edge1.getStart().toString() + edge1.getEnd().toString() + edge1.getLabel();
+            String e2 = edge2.getStart().toString() + edge2.getEnd().toString() + edge2.getLabel();
+            return e1.compareTo(e2);
+        }
     }
 
     private void isEmpty(List<String> arguments) {

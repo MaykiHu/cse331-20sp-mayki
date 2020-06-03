@@ -313,11 +313,22 @@ public class PathfinderTestDriver {
         listNodes(graphName);
     }
 
+    /*
+     * Computes how to compare between two nodes
+     */
+    private class NodeComp implements Comparator<Node<String>> {
+        public int compare(Node<String> node1, Node<String> node2) {
+            // Compare their respective data
+            return node1.getData().compareTo(node2.getData());
+        }
+    }
+
     private void listNodes(String graphName) {
         DirectedGraph<String, Double> testGraph = graphs.get(graphName);
         GenericDijkstra<String> testMap = new GenericDijkstra<>();
         testMap.setCampusGraph(testGraph);
-        Set<Node<String>> listOfNodes = testGraph.listNodes();
+        Set<Node<String>> listOfNodes = new TreeSet<>(new NodeComp());
+        listOfNodes.addAll(testGraph.listNodes());
         String outputString = graphName + " contains:";
         for (Node<String> node : listOfNodes) {
             outputString += " " + node.toString();
@@ -335,12 +346,26 @@ public class PathfinderTestDriver {
         listChildren(graphName, parentName);
     }
 
+    /*
+     * Computes how to compare between two edges
+     */
+    private static class EdgeComp implements Comparator<Edge<String, Double>> {
+        public int compare(Edge<String, Double> edge1, Edge<String, Double> edge2) {
+            // Since toString() represents each edge/node distinctly, we can compare via toString()
+            // We have to rearrange the toString() such that it evaluates
+            // startNode -> endNode -> label
+            String e1 = edge1.getStart().toString() + edge1.getEnd().toString() + edge1.getLabel();
+            String e2 = edge2.getStart().toString() + edge2.getEnd().toString() + edge2.getLabel();
+            return e1.compareTo(e2);
+        }
+    }
+
     private void listChildren(String graphName, String parentName) {
         DirectedGraph<String, Double> testGraph = graphs.get(graphName);
         GenericDijkstra<String> testMap = new GenericDijkstra<>();
         testMap.setCampusGraph(testGraph);
-        Set<Edge<String, Double>> listOfChildren = testGraph.
-                listChildren(new Node<>(parentName),false);
+        Set<Edge<String, Double>> listOfChildren = new TreeSet<>(new EdgeComp());
+        listOfChildren.addAll(testGraph.listChildren(new Node<>(parentName), false));
         String outputString = "the children of " + parentName + " in " + graphName + " are:";
         for (Edge<String, Double> child : listOfChildren) {
             outputString += " " + child.toString() + String.format("(%.3f", child.getLabel()) + ")";

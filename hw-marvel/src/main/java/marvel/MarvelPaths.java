@@ -203,7 +203,8 @@ public class MarvelPaths {
                 }
                 return destPath;
             } // Continue searching through edges of this node
-            Set<Edge<String, String>> sortedEdges = universe.listChildren(currNode, false); // no reflexive
+            Set<Edge<String, String>> sortedEdges = new TreeSet<>(new EdgeComp());
+            sortedEdges.addAll(universe.listChildren(currNode, false)); // no reflexive
             for (Edge<String, String> currEdge : sortedEdges) {
                 Node<String> nextNode = currEdge.getEnd();
                 if (!nodePaths.containsKey(nextNode)) { // nextNode has not been visited
@@ -220,5 +221,19 @@ public class MarvelPaths {
         if (output != null)
             output.println("no path found");
         return null;
+    }
+
+    /*
+        Computes how to compare between two edges
+     */
+    private static class EdgeComp implements Comparator<Edge<String, String>> {
+        public int compare(Edge<String, String> edge1, Edge<String, String> edge2) {
+            // Since toString() represents each edge/node distinctly, we can compare via toString()
+            // We have to rearrange the toString() such that it evaluates
+            // startNode -> endNode -> label
+            String e1 = edge1.getStart().toString() + edge1.getEnd().toString() + edge1.getLabel();
+            String e2 = edge2.getStart().toString() + edge2.getEnd().toString() + edge2.getLabel();
+            return e1.compareTo(e2);
+        }
     }
 }
