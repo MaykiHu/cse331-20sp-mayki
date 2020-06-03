@@ -20,9 +20,10 @@ interface MapProps {
 
 interface MapState {
     backgroundImage: HTMLImageElement | null,
-    buildings: string[]
-    startValue: string
-    endValue: string
+    buildings: string[] // the short name list of buildings
+    startValue: string // the starting building in drop down
+    endValue: string // the ending building in drop down
+    drawnPath: [number, number, number, number][] // the path drawn's location info
 }
 
 class Map extends Component<MapProps, MapState> {
@@ -40,9 +41,10 @@ class Map extends Component<MapProps, MapState> {
         super(props);
         this.state = {
             backgroundImage: null,
-            buildings: [],
+            buildings: [],     // list of all the buildings (populate it when loaded)
             startValue: "BAG", // BAG is the building name always starting in drop down list first
-            endValue: "BAG" // BAG is the building name always ending in the drop down list first
+            endValue: "BAG", // BAG is the building name always ending in the drop down list first
+            drawnPath: []    // the path locations drawn, none yet
         };
         this.canvas = React.createRef();
     }
@@ -51,15 +53,50 @@ class Map extends Component<MapProps, MapState> {
         this.fetchAndSaveImage();
         this.fetchDropList();
         this.drawBackgroundImage();
+        this.redraw();
     }
 
     componentDidUpdate() {
         this.drawBackgroundImage();
+        this.redraw();
+    }
+
+    // redraws the current path on screen from drawnPath's JSON (specifies path info)
+    redraw = () => {
+        if(this.canvas.current === null) {
+            throw new Error("Unable to access canvas.");
+        }
+        const ctx = this.canvas.current.getContext('2d');
+        if (ctx === null) {
+            throw new Error("Unable to create canvas drawing context.");
+        }
+
+        ctx.clearRect(0, 0, this.props.width, this.props.height);
+        // Once the image is done loading, it'll be saved inside our state.
+        // Otherwise, we can't draw the image, so skip it.
+        if (this.state.backgroundImage !== null) {
+            ctx.drawImage(this.state.backgroundImage, 0, 0);
+        }
+        // Draw the current path -- all its edge glory.  :)
+        for (let edge of this.state.drawnPath) { // For each edge in path to draw
+            this.drawEdge(ctx, edge);
+        }
+
+    }
+
+    // Draws edges based on given array of coordinates to draw
+    drawEdge = (ctx: any, edge: [number, number, number, number]) => {
+        ctx.strokeStyle = "purple"; // Draw path in purple UW color!!  Yaaaaay~ :)
+        ctx.lineWidth = 10; // The stroke width
+        ctx.beginPath();
+        ctx.moveTo(edge[0], edge[1]); // Pen to beginning of edge
+        ctx.lineTo(edge[2], edge[3]); // End point of the line
+        ctx.stroke();                 // Draw the line
     }
 
     // Creates drop-down list of buildings on campus from the server data of campus buildings
     fetchDropList() {
-        // Get the JSON info from server on buildings
+        // Get the JSON info from server on buildings, sorted alphabetically
         fetch("http://localhost:4567/buildings")
             .then((res) => {
                 return res.json();
@@ -67,7 +104,7 @@ class Map extends Component<MapProps, MapState> {
             // Save the building information
             .then(data => {
                 this.setState({
-                    buildings: Object.keys(data).sort()
+                    buildings: Object.keys(data).sort() // Short names of buildings, sorted
                 })
             });
     }
@@ -115,19 +152,40 @@ class Map extends Component<MapProps, MapState> {
         });
     }
 
-    // Creates the path from JSON that is generated from the start and stop of current dropdown
-    // start and stop building values
+    // Updates the path drawn state that needs to be drawn on screen based on dropdown buildings
     handleFindClick = (event: any) => {
-        // The server request URL based on start/stop state
+        // The server request URL based on start/stop state in dropdown lists
         let serverReqUrl = "http://localhost:4567/path?startName=" + this.state.startValue +
             "&endName=" + this.state.endValue;
+        let edgeInfo : [number, number, number, number][] = []; // [startX, startY, endX, endY]
         fetch(serverReqUrl)
             .then((res) => {
                 return res.json();
             })
             .then(data => {
-                console.log(data);
-            })
+                let paths = data["path"]; // Get the data on the paths to be drawn
+                for (let edge of paths) { // For each edge in paths
+                    let startData = edge["start"]["data"]; // data on start building
+                    let endData = edge["end"]["data"]; // data on end building
+                    let startX = startData["x"]; // starting building's X loc
+                    let startY = startData["y"]; // starting building's Y loc
+                    let endX = endData["x"]; // ending building's X loc
+                    let endY = endData["y"]; // ending building's Y loc
+                    edgeInfo.push([startX, startY, endX, endY]); // Save curr path info
+                }
+                this.setState({ // Update with paths that now needs to be drawn
+                    drawnPath: edgeInfo
+                })
+            });
+    }
+
+    // Resets the program to make page as if freshly loaded
+    handleClearClick = (event: any) => {
+        this.setState({
+            startValue: "BAG", // BAG is the building name always starting in drop down list first
+            endValue: "BAG", // BAG is the building name always ending in the drop down list first
+            drawnPath: []    // the path locations drawn, none yet
+        })
     }
 
     render() {
@@ -149,7 +207,7 @@ class Map extends Component<MapProps, MapState> {
                         </select>
                     </div>
                     <button id="find-button" onClick={this.handleFindClick}>Find Shortest Path</button>
-                    <button id="clear-button">Clear All</button>
+                    <button id="clear-button" onClick={this.handleClearClick}>Clear All</button>
                 </div>
                 <canvas ref={this.canvas} width={this.props.width} height={this.props.height}/>
             </div>
