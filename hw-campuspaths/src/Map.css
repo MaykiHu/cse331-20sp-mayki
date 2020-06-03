@@ -27,3 +27,37 @@ canvas {
     margin: 0 auto;
     display: block;
 }
+
+/* Left-aligns the "Campus Pathfinder" text. Also makes the text bigger, bold, and adds
+some space around the title. Re-used some code from Dots assignment */
+#app-title {
+    text-align: left;
+    font-size: 30px;
+    font-weight: bold;
+    margin: 10px;
+}
+
+/* The div for the dropdowns, so they appear inline with some nice spacing and border */
+#dropdown {
+    display: inline-flex;
+    margin: 10px;
+    padding-right: 1%;
+    padding-left: 1%;
+    border-style: dashed;
+}
+
+/* For spacing between start/stop dropdowns */
+#start-dropdown {
+    margin-right: 5%;
+}
+
+/* For spacing of find shortest path button */
+#find-button {
+    margin: 5%;
+    height: fit-content;
+}
+
+/* For spacing of clear all button, top and bottom have some margin */
+#clear-button {
+    margin: 5% 0 5% 0;
+}

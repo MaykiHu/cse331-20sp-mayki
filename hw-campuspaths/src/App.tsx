@@ -10,12 +10,16 @@
  */
 
 import React, {Component} from 'react';
+import Map from "./Map";
 
 class App extends Component<{}, {}> {
 
     render() {
         return (
-            <p>Here's the beginning of your AMAZING CampusPaths GUI!</p>
+            <div>
+            <p id="app-title">Campus Pathfinder</p>
+            <Map width={4330} height={2964}/>
+            </div>
         );
     }
 
