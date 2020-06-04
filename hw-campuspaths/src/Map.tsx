@@ -131,7 +131,7 @@ class Map extends Component<MapProps, MapState> {
         if (canvas === null) throw Error("Unable to draw, no canvas ref.");
         let ctx = canvas.getContext("2d");
         if (ctx === null) throw Error("Unable to draw, no valid graphics context.");
-        //
+
         if (this.state.backgroundImage !== null) { // This means the image has been loaded.
             // Sets the internal "drawing space" of the canvas to have the correct size.
             // This helps the canvas not be blurry.
@@ -194,22 +194,23 @@ class Map extends Component<MapProps, MapState> {
     render() {
         return (
             <div id="map">
+                <p id="app-title">Campus Pathfinder</p>
                 <div id="dropdown">
                     <div id="start-dropdown">
-                        <p>Start Building:</p>
+                        <p>Start:</p>
                         <select value={this.state.startValue} onChange={this.handleStartChange}>
                             {this.state.buildings.map((building) =>
                                 <option key={building} value={building}>{building}</option>)}
                         </select>
                     </div>
                     <div id="stop-dropdown">
-                        <p>End Building:</p>
+                        <p>Stop:</p>
                         <select value={this.state.endValue} onChange={this.handleEndChange}>
                             {this.state.buildings.map((building) =>
                                 <option key={building} value={building}>{building}</option>)}
                         </select>
                     </div>
-                    <button id="find-button" onClick={this.handleFindClick}>Find Shortest Path</button>
+                    <button id="find-button" onClick={this.handleFindClick}>Find Path</button>
                     <button id="clear-button" onClick={this.handleClearClick}>Clear All</button>
                 </div>
                 <canvas ref={this.canvas} width={this.props.width} height={this.props.height}/>

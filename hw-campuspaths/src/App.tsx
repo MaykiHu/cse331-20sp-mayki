@@ -17,7 +17,6 @@ class App extends Component<{}, {}> {
     render() {
         return (
             <div>
-            <p id="app-title">Campus Pathfinder</p>
             <Map width={4330} height={2964}/>
             </div>
         );
