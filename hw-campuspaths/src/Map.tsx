@@ -44,7 +44,7 @@ class Map extends Component<MapProps, MapState> {
             buildings: [],     // list of all the buildings (populate it when loaded)
             startValue: "BAG", // BAG is the building name always starting in drop down list first
             endValue: "BAG", // BAG is the building name always ending in the drop down list first
-            drawnPath: []    // the path locations drawn, none yet
+            drawnPath: [],    // the path locations drawn, none yet
         };
         this.canvas = React.createRef();
     }
@@ -62,7 +62,7 @@ class Map extends Component<MapProps, MapState> {
     }
 
     // redraws the current path on screen from drawnPath's JSON (specifies path info)
-    redraw = () => {
+    redraw() {
         if(this.canvas.current === null) {
             throw new Error("Unable to access canvas.");
         }
@@ -81,13 +81,16 @@ class Map extends Component<MapProps, MapState> {
         for (let edge of this.state.drawnPath) { // For each edge in path to draw
             this.drawEdge(ctx, edge);
         }
-
     }
 
     // Draws edges based on given array of coordinates to draw
     drawEdge = (ctx: any, edge: [number, number, number, number]) => {
         ctx.strokeStyle = "purple"; // Draw path in purple UW color!!  Yaaaaay~ :)
+        ctx.lineCap = "round"; // Lines have rounded edges
         ctx.lineWidth = 10; // The stroke width
+        // Adds outer faint gold glowing effect
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = "gold";
         ctx.beginPath();
         ctx.moveTo(edge[0], edge[1]); // Pen to beginning of edge
         ctx.lineTo(edge[2], edge[3]); // End point of the line

@@ -61,10 +61,17 @@ some space around the title. Re-used some code from Dots assignment */
     color: gold;
 }
 
+/* For background color of dropdowns */
 select {
-    background-color: lightgoldenrodyellow;
+    background-color: gold;
 }
 
+/* For color change when hovering over drop down */
+select:hover {
+    background-color: yellow;
+}
+
+/* For background color of dropdown items */
 option {
     background-color: goldenrod;
     color: rebeccapurple;
@@ -81,6 +88,16 @@ option {
     height: fit-content;
     background-color: gold;
     border-radius: 10px;
+}
+
+/* For changing color on find-button when hovered */
+#find-button:hover {
+    background-color: yellow;
+}
+
+/* For changing color on clear-button when hovered */
+#clear-button:hover {
+    background-color: yellow;
 }
 
 /* For spacing of clear all button, top and bottom have some margin */
